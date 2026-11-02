@@ -1,70 +1,148 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>GPS Engramas</title>
-    <style>
-        body { 
-            margin: 0; padding: 0; font-family: sans-serif; background: #1a1a1a; color: #fff;
-            display: flex; flex-direction: column; height: 100vh; overflow: hidden;
-        }
-        #painel-controle {
-            background: #252525; padding: 15px; border-bottom: 2px solid #333; text-align: center;
-        }
-        h2 { margin: 0 0 5px 0; font-size: 16px; color: #00ff88; }
-        p { margin: 0 0 12px 0; font-size: 13px; color: #bbb; min-height: 45px; line-height: 1.4; }
-        button {
-            background: #00ff88; color: #000; border: none; padding: 12px;
-            width: 100%; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 14px;
-        }
-        button:hover { background: #00cc6c; }
-        #mapa-container { 
-            flex-grow: 1; display: flex; justify-content: center; align-items: center; background: #111; overflow: hidden; padding: 10px;
-        }
-        img { max-width: 100%; max-height: 100%; object-fit: contain; border: 1px solid #333; }
-    </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GPS Engramas — Alt1</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{font-family:system-ui,Segoe UI,Arial,sans-serif;color:#f0f5f3;background:#111a1b;font-size:13px}
+*{box-sizing:border-box}html,body{height:100%;margin:0}button,input,select{font:inherit}button{cursor:pointer;border:1px solid #425351;background:#253735;color:#f1f7f5;border-radius:7px;padding:8px}button:hover{background:#31514a}button:disabled{opacity:.4;cursor:not-allowed}.primary{background:#00ad74;color:#061b13;border:0;font-weight:700}.primary:hover{background:#30d497}.ghost{background:transparent}#app{height:100%;display:flex;flex-direction:column}header{display:flex;align-items:center;justify-content:space-between;background:#192727;border-bottom:1px solid #364b45;padding:9px 11px;gap:8px}header b{font-size:15px;color:#62e5b6}header small{display:block;color:#9badab}#tools{display:flex;gap:5px}#statusbar{padding:9px 11px;background:#1c2e2d;display:flex;gap:8px;align-items:center;justify-content:space-between}#title{font-size:15px;font-weight:700}#place{color:#bad2cd;padding:3px 11px 8px;background:#1c2e2d;line-height:1.45}#map{min-height:190px;flex:1;background:#111d1c;position:relative}#fallback{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;background:#12201e;z-index:600;line-height:1.6;padding:20px}#mapActions{position:absolute;z-index:500;right:9px;bottom:10px;display:flex;gap:5px}#mapActions button{background:#19352e;border-color:#386052;box-shadow:0 2px 6px #0008}#hint{background:#1a2927;border-top:1px solid #334b46;padding:9px 11px;line-height:1.4}#routeTitle{font-weight:700;color:#68e8b6}#alternatives{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}#alternatives button{padding:5px 7px;font-size:11px}#alternatives button.active{border-color:#31ca9a;color:#74ffcb}#warning{font-size:11px;color:#e7ca85;margin-top:4px}footer{padding:8px 11px;background:#182525;display:flex;gap:6px;align-items:center}footer button{flex:1}#progress{color:#b9ccc6;font-size:11px;text-align:center;padding:5px}#modal{position:fixed;inset:0;background:#000b;z-index:1200;display:none;justify-content:center;align-items:center;padding:9px}#modal.open{display:flex}#sheet{background:#182827;border:1px solid #42665b;border-radius:10px;width:min(100%,520px);max-height:96vh;display:flex;flex-direction:column;overflow:hidden}#sheet h2{margin:0;padding:13px;border-bottom:1px solid #3d544f}#settingsContent{overflow:auto;padding:10px 13px}fieldset{border:1px solid #35514b;border-radius:8px;margin:10px 0;padding:9px}legend{padding:0 5px;color:#67e7b8;font-weight:700}.choice{display:flex;align-items:center;padding:5px 0;gap:9px}.choice input{accent-color:#0cba83;width:16px;height:16px}.note{color:#a8bbb6;font-size:11px;line-height:1.45}.line{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0}.line input{width:72px;background:#253937;border:1px solid #527166;color:white;border-radius:5px;padding:6px}#sheetFooter{display:flex;gap:8px;padding:10px 13px;border-top:1px solid #35514b}#sheetFooter button{flex:1}.pin{background:#00c68f;border:3px solid white;box-shadow:0 0 0 2px #00593f,0 2px 8px black;width:20px;height:20px;border-radius:50%}.telepin{background:#39b3f7;border:2px solid white;box-shadow:0 2px 5px #0008;width:14px;height:14px;border-radius:50%}.telepin.chosen{background:#ffce56;box-shadow:0 0 0 2px #e7a82e,0 2px 5px #000}.leaflet-control-attribution{font-size:8px!important}a{color:#8ddec7}#mapNote{position:absolute;top:10px;left:50px;right:10px;z-index:500;pointer-events:none;font-size:11px;color:#e4eee9;text-shadow:1px 1px 3px #000}#mapNote span{background:#162722d8;border-radius:5px;padding:4px 7px;display:inline-block}
+</style>
 </head>
 <body>
-
-    <div id="painel-controle">
-        <h2 id="engrama-nome">1. Druid (Burthorpe)</h2>
-        <p id="engrama-teleporte">Teleporte: Magnetita de Burthorpe ➡️ Entre na igreja logo ao norte, em cima do altar de oração.</p>
-        <button onclick="proximoEngrama()">Próximo Local ➡️</button>
-    </div>
-
-    <div id="mapa-container">
-        <img id="mapa-img" src="https://imgur.com" alt="Mapa">
-    </div>
-
-    <script>
-        // Imagens hospedadas externamente sem bloqueio de segurança do Alt1
-        const engramas = [
-            { nome: "1. Druid (Burthorpe)", tele: "Magnetita de Burthorpe ➡️ Entre na igreja logo ao norte, em cima do altar de oração.", img: "https://imgur.com" },
-            { nome: "2. Balanced (Falador)", tele: "Magnetita de Falador ➡️ Corra para o norte (saída da cidade) e suba até o círculo de pedras.", img: "https://imgur.com" },
-            { nome: "3. Sheep (Lumbridge)", tele: "Magnetita de Lumbridge ➡️ Corra para o norte até a fazenda. Fica na mesa dentro da casa do Fred.", img: "https://imgur.com" },
-            { nome: "4. Xanerus (Entrana)", tele: "Barco de Port Sarim ➡️ Vá até a caixa de areia. Escondido embaixo do cogumelo grande.", img: "https://imgur.com" },
-            { nome: "5. Elder Sword (Pest Control)", tele: "Minijogo Pest Control ➡️ Vá até a ponta sudeste do posto avançado, em cima de um barril.", img: "https://imgur.com" },
-            { nome: "6. Tears of Guthix", tele: "Games Necklace ➡️ Vá até as Lágrimas de Guthix. O engrama está na parede ao sul da cobra Juna.", img: "https://imgur.com" },
-            { nome: "7. Stone of Jas (Fist of Guthix)", tele: "Games Necklace ➡️ Gamer's Grotto ➡️ Fist of Guthix. Na prateleira do balcão de recompensas.", img: "https://imgur.com" },
-            { nome: "8. Sword of Edicts (Wilderness)", tele: "Magnetita do Deserto ➡️ Corra um pouco para o leste em direção à cratera de Divinação.", img: "https://imgur.com" },
-            { nome: "9. World Gate", tele: "Anel Sixth Age Circuit ➡️ Entre duas rochas logo ao norte do portal World Gate.", img: "https://imgur.com" },
-            { nome: "10. Gnome (Gnome Maze)", tele: "Magnetita de Yanille ➡️ Labirinto ao oeste. Vá até o fim do beco sem saída bem no centro.", img: "https://imgur.com" },
-            { nome: "11. Glarel's Tombstone", tele: "Capa de Pesca ou Mgt Ardougne ➡️ Noroeste até o túmulo de Glarel. Canto sudoeste da plataforma.", img: "https://imgur.com" }
-        ];
-
-        let indexAtual = 0;
-
-        function atualizarInterface() {
-            const atual = engramas[indexAtual];
-            document.getElementById("engrama-nome").innerText = atual.nome;
-            document.getElementById("engrama-teleporte").innerText = "Teleporte: " + atual.tele;
-            document.getElementById("mapa-img").src = atual.img;
-        }
-
-        function proximoEngrama() {
-            indexAtual = (indexAtual + 1) % engramas.length;
-            atualizarInterface();
-        }
-    </script>
+<div id="app">
+<header><div><b>◈ GPS Engramas</b><small>RuneScape 3 • Alt1</small></div><div id="tools"><button id="wiki" title="Abrir Wiki">Wiki ↗</button><button id="config" title="Meus teleportes">⚙ Config.</button></div></header>
+<div id="statusbar"><div><div id="title">Carregando…</div><small id="counter"></small></div><button id="list" title="Escolher engrama">☷ Lista</button></div>
+<div id="place"></div>
+<div id="map"><div id="fallback">Mapa indisponível. Verifique a conexão; use <b>Ver no mapa externo</b> ou a Wiki.</div><div id="mapNote"><span id="coordNote">Arraste para explorar • Roda do mouse para zoom</span></div><div id="mapActions"><button id="recenter" title="Voltar ao destino">⌖ Centralizar</button><button id="external">↗ Mapa</button><button id="setPin" title="Ajustar posição manualmente">📍 Ajustar</button></div></div>
+<div id="hint"><div id="routeTitle"></div><div id="routeText"></div><div id="alternatives"></div><div id="warning"></div></div>
+<div id="progress"></div>
+<footer><button id="prev">← Anterior</button><button id="done" class="primary">✓ Coletado e próximo</button><button id="next">Próximo →</button></footer>
+</div>
+<div id="modal" role="dialog" aria-modal="true" aria-label="Configurações"><div id="sheet"><h2 id="sheetTitle">⚙ Configurações</h2><div id="settingsContent"></div><div id="sheetFooter"><button id="cancel">Cancelar</button><button class="primary" id="save">Salvar configurações</button></div></div></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+'use strict';
+// Coordenadas iniciais dos engramas são referências aproximadas, NÃO pontos auditados.
+// Para corrigir: "📍 Ajustar" -> clique no ponto exato do mapa -> a correção fica salva.
+const BASE = 'https://raw.githubusercontent.com/mejrs/layers_rs3/refs/heads/master';
+const MAP_EXTERNAL = 'https://mejrs.github.io/rs3.html';
+const STORE='gps-engramas-v2';
+const wiki=(name)=>'https://runescape.wiki/w/'+encodeURIComponent(name.replaceAll(' ','_'));
+const ENGRAMAS=[
+ {id:'druid',nome:'Druid',regiao:'Taverley',map:28,x:2913,y:3465,desc:'No chão, junto ao Altar de Guthix e aos druidas de Taverley.',req:'',routes:[['taverley','Da magnetita de Taverley, siga para nordeste até o altar.'],['burthorpe','Siga para sul, na direção dos druidas de Taverley.']]},
+ {id:'balance',nome:'Balance Elemental',regiao:'Norte de Falador',map:28,x:2987,y:3430,desc:'No topo da pedra central do círculo de pedras, a leste da magnetita de Falador.',req:'',routes:[['falador','Corra para leste até o círculo de pedras.'],['games','Saia da Gamers’ Grotto e siga para leste.']]},
+ {id:'sheep',nome:'Sheep',regiao:'Lumbridge',map:28,x:3194,y:3276,desc:'Na mesa da casa de Fred the Farmer, ao norte de Lumbridge.',req:'',routes:[['lumbridge_spell','Siga para norte até a casa de Fred.'],['lumbridge','Siga para norte até a fazenda de Fred.']]},
+ {id:'fairy',nome:'Fairy',regiao:'Zanaris',map:1,x:2442,y:4445,desc:'Debaixo dos cogumelos perto da caixa de areia, a leste do campo de trigo.',req:'Lost City para entrar em Zanaris.',routes:[['fairyring','Entre em Zanaris por um anel de fada e siga para leste.'],['lumbridge','Vá à cabana do pântano de Lumbridge e entre em Zanaris com o acesso exigido.']]},
+ {id:'elder',nome:'Elder Sword',regiao:'Void Knights’ Outpost',map:28,x:2669,y:2673,desc:'Sobre um barril no extremo sudeste do posto avançado dos Cavaleiros do Vazio.',req:'',routes:[['voidseal','Teleporte diretamente ao posto avançado e vá para sudeste.'],['portsarim','Vá a Port Sarim, pegue o barco para o posto avançado e siga a sudeste.']]},
+ {id:'guardians',nome:'Guardians of Guthix',regiao:'Caverna Tears of Guthix',map:634,x:3232,y:9504,desc:'Na caverna, ao sul da área de Tears of Guthix, perto de Juna.',req:'Acesso à caverna Tears of Guthix.',routes:[['games','Use o colar de jogos → Tears of Guthix, depois vá para sul.'],['lumbridge','Entre pelas cavernas do pântano de Lumbridge e siga até Tears of Guthix.']]},
+ {id:'jas',nome:'Stone of Jas',regiao:'Fist of Guthix',map:105,x:1696,y:5600,desc:'Na prateleira da parede norte da área de recompensas do Fist of Guthix.',req:'Acesso à Gamers’ Grotto.',routes:[['duel','Use o anel de duelo → Fist of Guthix, então procure a prateleira.'],['games','Use a opção de transporte para Gamers’ Grotto, entre no portal do Fist of Guthix.'],['falador','Vá para leste até a Gamers’ Grotto, entre no portal do Fist of Guthix.']]},
+ {id:'edicts',nome:'Sword of Edicts',regiao:'Wilderness Crater',map:28,x:3127,y:3700,desc:'Perto da Sword of Edicts, no centro da cratera de Wilderness.',req:'Área de Wilderness: verifique seus itens e o risco antes de entrar.',routes:[['wild','Vá para norte, rumo ao centro da cratera.'],['edgeville','Siga para norte até a Wilderness Crater.']]},
+ {id:'world',nome:'World Gate',regiao:'Perto de Eagle’s Peak',map:28,x:2357,y:3488,desc:'Entre duas rochas a norte do World Gate, próximo a três lagos.',req:'',routes:[['sixth','Use o Sixth-Age circuit → World Gate; procure as rochas ao norte.'],['traveller','Use o traveller’s necklace → Outpost e siga para oeste.'],['eagles','Siga para sul até o World Gate e procure as rochas.']]},
+ {id:'gnome',nome:'Gnome',regiao:'Gnome Maze',map:28,x:2518,y:3173,desc:'Em um beco sem saída no centro-sul do Labirinto dos Gnomos.',req:'',routes:[['watchtower','Vá ao norte até a entrada sudeste do labirinto.'],['yanille','Vá para norte até a entrada noroeste do labirinto.']]},
+ {id:'time',nome:'Time',regiao:'Túmulo de Glarial',map:28,x:2556,y:3440,desc:'Sob um arbusto ao lado de uma árvore, na parte sul do túmulo de Glarial.',req:'',routes:[['luck','Use Dwarven Outpost (Dark Facet of Luck), depois siga para sul.'],['skills','Use o colar de habilidades → Fishing Guild e siga para noroeste.'],['ardougne','Siga para noroeste na direção do túmulo de Glarial.']]},
+ {id:'naragi',nome:'Naragi',regiao:'Naragun (área especial)',map:null,x:null,y:null,desc:'No tutorial, Orla entrega este engrama. Após prestígio, ele fica no chão da casa de Guthix em Naragun: anel de fada AIS, norte e oeste.',req:'Para prestígios posteriores: acesso a Naragun por The World Wakes (avanço necessário).',routes:[['fairyring','Use o anel de fada AIS, siga para norte e depois para oeste até a casa de Guthix.']]}
+];
+// Todos os teleportes abaixo são seleções manuais: o addon NÃO lê desbloqueios da conta.
+const TELE=[
+ {id:'taverley',label:'Magnetita de Taverley',cat:'Magnetitas',map:28,x:2878,y:3442,default:true},
+ {id:'burthorpe',label:'Magnetita de Burthorpe',cat:'Magnetitas',map:28,x:2899,y:3544,default:true},
+ {id:'falador',label:'Magnetita de Falador',cat:'Magnetitas',map:28,x:2967,y:3403,default:true},
+ {id:'lumbridge',label:'Magnetita de Lumbridge',cat:'Magnetitas',map:28,x:3233,y:3221,default:true},
+ {id:'yanille',label:'Magnetita de Yanille',cat:'Magnetitas',map:28,x:2529,y:3094,default:true},
+ {id:'portsarim',label:'Magnetita de Port Sarim',cat:'Magnetitas',map:28,x:3011,y:3215,default:true},
+ {id:'wild',label:'Magnetita de Wilderness Crater',cat:'Magnetitas',map:28,x:3143,y:3635,default:true},
+ {id:'edgeville',label:'Magnetita de Edgeville',cat:'Magnetitas',map:28,x:3067,y:3505,default:true},
+ {id:'ardougne',label:'Magnetita de Ardougne',cat:'Magnetitas',map:28,x:2634,y:3348,default:true},
+ {id:'eagles',label:'Magnetita de Eagles’ Peak',cat:'Magnetitas',map:28,x:2366,y:3479,default:true},
+ {id:'fairyring',label:'Anéis de fada / AIS / Zanaris',cat:'Transportes especiais',map:1,x:2440,y:4420},
+ {id:'sixth',label:'Sixth-Age circuit (World Gate)',cat:'Joias e itens',map:28,x:2357,y:3488},
+ {id:'traveller',label:'Traveller’s necklace (Outpost)',cat:'Joias e itens',map:28,x:2366,y:3479},
+ {id:'games',label:'Games necklace / Gamers’ Grotto / Tears',cat:'Joias e itens',map:null,x:null,y:null},
+ {id:'duel',label:'Ring of duelling (Fist of Guthix)',cat:'Joias e itens',map:105,x:1696,y:5600},
+ {id:'skills',label:'Skills necklace (Fishing Guild)',cat:'Joias e itens',map:28,x:2610,y:3406},
+ {id:'luck',label:'Luck of the Dwarves + Dark Facet',cat:'Joias e itens',map:28,x:2448,y:3485},
+ {id:'voidseal',label:'Void knight seal',cat:'Joias e itens',map:28,x:2669,y:2673},
+ {id:'watchtower',label:'Watchtower Teleport',cat:'Feitiços',map:28,x:2550,y:3110},
+ {id:'lumbridge_spell',label:'Lumbridge Teleport',cat:'Feitiços',map:28,x:3222,y:3218}
+];
+const $=id=>document.getElementById(id);
+function load(){
+ try{
+  const latest=JSON.parse(localStorage.getItem(STORE));if(latest)return latest;
+  // Migração das opções compatíveis com o addon anterior (versão 1.1).
+  const old=JSON.parse(localStorage.getItem('gps_engramas_teleportes_v1')||'null');
+  if(Array.isArray(old)){
+   const aliases={wilderness:'wild',port_sarim:'portsarim',games_necklace:'games',sixth_age:'sixth',fairy_ring:'fairyring'};
+   return {teleports:Object.fromEntries(TELE.map(t=>[t.id,old.some(v=>(aliases[v]||v)===t.id)]))};
+  }
+ }catch(e){}
+ return {};
+}
+let state=Object.assign({index:0,prestige:1,done:{},teleports:Object.fromEntries(TELE.map(t=>[t.id,!!t.default])),selected:{},pins:{},showAll:true},load());
+function save(){try{localStorage.setItem(STORE,JSON.stringify(state))}catch(e){alert('Não foi possível salvar neste navegador.')}}
+const here=()=>ENGRAMAS[state.index];
+function coords(e){const custom=state.pins[e.id];return custom||((e.x===null)?null:{map:e.map,x:e.x,y:e.y,verified:false})}
+function routes(e){return e.routes.filter(([id])=>state.teleports[id]);}
+function picked(e){const opts=routes(e);return opts.find(([id])=>id===state.selected[e.id])||opts[0]||null}
+let map=null,baseLayer=null,iconLayer=null,destMarker=null,transportLayer=null,pickMode=false,currentMapId=null;
+function tileLayer(kind,id){
+ const RS3Layer=L.TileLayer.extend({getTileUrl(c){return `${BASE}/${kind}/${id}/${c.z}/0_${c.x}_${-1-c.y}.png`;}});
+ return new RS3Layer('',{minZoom:-2,maxZoom:4,maxNativeZoom:3,noWrap:true,tileSize:256,attribution:'Mapa: mejrs / RuneScape Wiki • © Jagex'});
+}
+function ensureMap(){if(map||typeof L==='undefined')return;map=L.map('map',{crs:L.CRS.Simple,zoomControl:true,zoomSnap:1,minZoom:-2,maxZoom:4,attributionControl:true});transportLayer=L.layerGroup().addTo(map);map.on('click',function(ev){if(!pickMode)return;let p=here(),c=coords(p);if(!c)return;state.pins[p.id]={map:c.map,x:Math.round(ev.latlng.lng),y:Math.round(ev.latlng.lat),verified:true};save();pickMode=false;$('setPin').textContent='📍 Ajustar';update();});}
+function draw(shiftMap=true){
+ ensureMap();const p=here(),c=coords(p);
+ if(!map){$('fallback').style.display='flex';return;}
+ $('fallback').style.display=c?'none':'flex';
+ if(!c){$('fallback').innerHTML='<div>Área especial sem coordenada de mapa confirmada.<br>Use as instruções ou abra a Wiki.</div>';return;}
+ const mapChanged=currentMapId!==c.map;
+ if(mapChanged){
+  if(baseLayer)map.removeLayer(baseLayer);
+  if(iconLayer)map.removeLayer(iconLayer);
+  baseLayer=tileLayer('map_squares',c.map).addTo(map);
+  iconLayer=tileLayer('icon_squares',c.map).addTo(map);
+  currentMapId=c.map;
+  const limits=c.map===28?[[1344,1856],[4544,4736]]:[[c.y-160,c.x-160],[c.y+160,c.x+160]];
+  map.setMaxBounds(limits);
+ }
+ if(destMarker)map.removeLayer(destMarker);
+ destMarker=L.marker([c.y,c.x],{icon:L.divIcon({className:'',html:'<div class="pin"></div>',iconSize:[20,20],iconAnchor:[10,10]}),title:p.nome}).addTo(map).bindPopup(p.nome+' — posição '+(c.verified?'ajustada':'aproximada'));
+ transportLayer.clearLayers();const chosen=picked(p);
+ TELE.filter(t=>t.map===c.map&&state.teleports[t.id]&&(state.showAll||p.routes.some(([id])=>id===t.id))).forEach(t=>{
+  const marker=L.marker([t.y,t.x],{icon:L.divIcon({className:'',html:`<div class="telepin ${chosen&&chosen[0]===t.id?'chosen':''}"></div>`,iconSize:[14,14],iconAnchor:[7,7]}),title:t.label}).addTo(transportLayer);
+  marker.bindPopup(t.label);marker.on('click',()=>{if(state.teleports[t.id]&&p.routes.some(([id])=>id===t.id)){state.selected[p.id]=t.id;save();update(false);}});
+ });
+ if(shiftMap||mapChanged)map.setView([c.y,c.x],c.map===28?2:3,{animate:false});
+ setTimeout(()=>map.invalidateSize(),75);
+}
+function update(shiftMap=true){const e=here(),c=coords(e);$('title').textContent=e.nome+' — '+e.regiao;$('counter').textContent=`Engrama ${state.index+1} de ${ENGRAMAS.length} · Prestígio ${state.prestige}`;$('place').textContent=e.desc;$('wiki').onclick=()=>window.open(wiki(e.nome+'_engram'),'_blank');
+ const avail=routes(e),best=picked(e);$('routeTitle').textContent=best?'Teleporte sugerido: '+TELE.find(t=>t.id===best[0]).label:'Nenhum teleporte configurado para este engrama';$('routeText').textContent=best?best[1]:'Abra ⚙ Config. e habilite um dos transportes indicados para este destino.';
+ $('warning').textContent=[e.req,c&&!c.verified?'Pino aproximado: ajuste no mapa para obter o ponto exato.':'',!c?'Área especial: consulte as instruções; não há pino preciso.':''].filter(Boolean).join(' · ');
+ $('alternatives').replaceChildren();avail.forEach(([id])=>{const b=document.createElement('button');b.textContent=TELE.find(t=>t.id===id).label;b.className=best&&best[0]===id?'active':'';b.onclick=()=>{state.selected[e.id]=id;save();update(false)};$('alternatives').appendChild(b)});
+ const done=state.done[state.prestige]||{};const count=ENGRAMAS.filter(x=>done[x.id]).length;$('progress').textContent=`${count}/12 coletados · ${done[e.id]?'✓ Atual concluído':'Pendente'} · Alterações salvas localmente`;$('done').textContent=done[e.id]?'↩ Desmarcar':'✓ Coletado e próximo';save();draw(shiftMap);
+}
+function jump(step){state.index=(state.index+step+ENGRAMAS.length)%ENGRAMAS.length;update()}
+$('prev').onclick=()=>jump(-1);$('next').onclick=()=>jump(1);$('done').onclick=()=>{let e=here();state.done[state.prestige] ||= {};if(state.done[state.prestige][e.id]){delete state.done[state.prestige][e.id];update();}else{state.done[state.prestige][e.id]=true;jump(1)}};
+$('recenter').onclick=()=>{const c=coords(here());if(map&&c)map.setView([c.y,c.x],c.map===28?2:3);};
+$('external').onclick=()=>{const c=coords(here());window.open(c?`${MAP_EXTERNAL}?m=${c.map}&x=${c.x}&y=${c.y}&z=3`:wiki('Engram'),'_blank');};
+$('setPin').onclick=()=>{if(!coords(here())){alert('Este engrama não tem mapa confirmado.');return;}pickMode=!pickMode;$('setPin').textContent=pickMode?'Clique no mapa…':'📍 Ajustar';};
+function openModal(kind){$('modal').classList.add('open');$('settingsContent').replaceChildren();$('save').style.display='block';
+ if(kind==='list'){$('sheetTitle').textContent='Escolha um engrama';$('save').style.display='none';$('cancel').textContent='Fechar';ENGRAMAS.forEach((e,i)=>{const b=document.createElement('button');b.style='width:100%;text-align:left;margin:3px 0';b.textContent=`${state.done[state.prestige]?.[e.id]?'✓':'○'} ${i+1}. ${e.nome} — ${e.regiao}`;b.onclick=()=>{state.index=i;closeModal();update()};$('settingsContent').appendChild(b)});return;}
+ $('sheetTitle').textContent='⚙ Meus teleportes';$('cancel').textContent='Cancelar';const draft=Object.assign({},state.teleports);
+ const line=document.createElement('div');line.className='line';line.innerHTML='<b>Prestígio atual</b><input id="prestigeValue" type="number" min="1" max="999" value="'+state.prestige+'">';$('settingsContent').appendChild(line);
+ const actions=document.createElement('div');actions.className='line';actions.innerHTML='<button id="all">Marcar todos</button><button id="none">Desmarcar todos</button>';$('settingsContent').appendChild(actions);
+ const checkboxes={};for(const cat of [...new Set(TELE.map(t=>t.cat))]){const f=document.createElement('fieldset'),leg=document.createElement('legend');leg.textContent=cat;f.appendChild(leg);TELE.filter(t=>t.cat===cat).forEach(t=>{const l=document.createElement('label');l.className='choice';const input=document.createElement('input');input.type='checkbox';input.checked=!!draft[t.id];input.onchange=()=>draft[t.id]=input.checked;checkboxes[t.id]=input;l.append(input,document.createTextNode(t.label));f.appendChild(l)});$('settingsContent').appendChild(f)}
+ $('all').onclick=()=>{TELE.forEach(t=>{draft[t.id]=true;checkboxes[t.id].checked=true})};$('none').onclick=()=>{TELE.forEach(t=>{draft[t.id]=false;checkboxes[t.id].checked=false})};
+ const show=document.createElement('label');show.className='choice';show.innerHTML='<input id="showAll" type="checkbox"> Mostrar todos os meus teleportes no mapa';$('settingsContent').appendChild(show);$('showAll').checked=state.showAll;
+ const note=document.createElement('p');note.className='note';note.textContent='Os desbloqueios são informados por você; não há leitura automática da conta. O primeiro teleporte disponível na lista de rotas é sugerido, mas não calculamos o caminho mais rápido.';$('settingsContent').appendChild(note);
+ const reset=document.createElement('button');reset.textContent='Limpar ajustes manuais dos pinos';reset.onclick=()=>{if(confirm('Apagar posições ajustadas no mapa?')){state.pins={};save();alert('Ajustes removidos.')}};$('settingsContent').appendChild(reset);
+ $('save').onclick=()=>{const p=Math.max(1,Math.min(999,Number($('prestigeValue').value)||1));state.prestige=p;state.teleports=draft;state.showAll=$('showAll').checked;save();closeModal();update()};
+}
+function closeModal(){$('modal').classList.remove('open')}
+$('config').onclick=()=>openModal('config');$('list').onclick=()=>openModal('list');$('cancel').onclick=closeModal;
+if(typeof L==='undefined'){$('fallback').style.display='flex';$('fallback').textContent='Não foi possível carregar Leaflet. Conecte-se à internet e reabra o addon.';}
+update();
+</script>
 </body>
 </html>
