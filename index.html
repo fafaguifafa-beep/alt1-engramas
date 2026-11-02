@@ -12,43 +12,44 @@
             background: #252525; padding: 15px; border-bottom: 2px solid #333; text-align: center;
         }
         h2 { margin: 0 0 5px 0; font-size: 16px; color: #00ff88; }
-        p { margin: 0 0 12px 0; font-size: 13px; color: #bbb; min-height: 32px; }
+        p { margin: 0 0 12px 0; font-size: 13px; color: #bbb; min-height: 45px; line-height: 1.4; }
         button {
             background: #00ff88; color: #000; border: none; padding: 12px;
             width: 100%; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 14px;
         }
         button:hover { background: #00cc6c; }
         #mapa-container { 
-            flex-grow: 1; display: flex; justify-content: center; align-items: center; background: #111; overflow: hidden;
+            flex-grow: 1; display: flex; justify-content: center; align-items: center; background: #111; overflow: hidden; padding: 10px;
         }
-        img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        img { max-width: 100%; max-height: 100%; object-fit: contain; border: 1px solid #333; }
     </style>
 </head>
 <body>
 
     <div id="painel-controle">
         <h2 id="engrama-nome">1. Druid (Burthorpe)</h2>
-        <p id="engrama-teleporte">Teleporte: Magnetita de Burthorpe ➡️ Altar da Igreja</p>
+        <p id="engrama-teleporte">Teleporte: Magnetita de Burthorpe ➡️ Entre na igreja logo ao norte, em cima do altar de oração.</p>
         <button onclick="proximoEngrama()">Próximo Local ➡️</button>
     </div>
 
     <div id="mapa-container">
-        <img id="mapa-img" src="https://runescape.wiki" alt="Mapa">
+        <img id="mapa-img" src="https://imgur.com" alt="Mapa">
     </div>
 
     <script>
+        // Imagens hospedadas externamente sem bloqueio de segurança do Alt1
         const engramas = [
-            { nome: "1. Druid (Burthorpe)", tele: "Magnetita de Burthorpe ➡️ Entre na igreja logo ao norte, em cima do altar.", img: "https://runescape.wiki" },
-            { nome: "2. Balanced (Falador)", tele: "Magnetita de Falador ➡️ Corra para o norte (saída da cidade), suba até o círculo de pedras.", img: "https://runescape.wiki" },
-            { nome: "3. Sheep (Lumbridge)", tele: "Magnetita de Lumbridge ➡️ Corra para o norte até a fazenda. Na mesa da casa do Fred.", img: "https://runescape.wiki" },
-            { nome: "4. Xanerus (Entrana)", tele: "Barco em Port Sarim ➡️ Vá até a caixa de areia. Escondido embaixo do cogumelo grande.", img: "https://runescape.wiki" },
-            { nome: "5. Elder Sword (Pest Control)", tele: "Minijogo Pest Control ➡️ Vá até a ponta sudeste do posto avançado, em cima de um barril.", img: "https://runescape.wiki" },
-            { nome: "6. Tears of Guthix", tele: "Games Necklace ➡️ Vá até as Lágrimas de Guthix. O engrama está logo ao sul da cobra Juna.", img: "https://runescape.wiki" },
-            { nome: "7. Stone of Jas (Fist of Guthix)", tele: "Games Necklace (Gamer's Grotto) ➡️ Fist of Guthix. Prateleira de cima do balcão de recompensas.", img: "https://runescape.wiki" },
-            { nome: "8. Sword of Edicts (Wilderness)", tele: "Magnetita do Deserto ➡️ Corra um pouco para o leste em direção à cratera de Divinação.", img: "https://runescape.wiki" },
-            { nome: "9. World Gate", tele: "Anel Sixth Age Circuit ➡️ Entre duas rochas logo ao norte do portal World Gate.", img: "https://runescape.wiki" },
-            { nome: "10. Gnome (Gnome Maze)", tele: "Magnetita de Yanille ➡️ Labirinto dos Gnomos ao oeste. Fim do beco sem saída no centro.", img: "https://runescape.wiki" },
-            { nome: "11. Glarel's Tombstone", tele: "Capa de Pesca ou Mgt Ardougne ➡️ Noroeste até o túmulo de Glarel. Canto sudoeste da plataforma.", img: "https://runescape.wiki" }
+            { nome: "1. Druid (Burthorpe)", tele: "Magnetita de Burthorpe ➡️ Entre na igreja logo ao norte, em cima do altar de oração.", img: "https://imgur.com" },
+            { nome: "2. Balanced (Falador)", tele: "Magnetita de Falador ➡️ Corra para o norte (saída da cidade) e suba até o círculo de pedras.", img: "https://imgur.com" },
+            { nome: "3. Sheep (Lumbridge)", tele: "Magnetita de Lumbridge ➡️ Corra para o norte até a fazenda. Fica na mesa dentro da casa do Fred.", img: "https://imgur.com" },
+            { nome: "4. Xanerus (Entrana)", tele: "Barco de Port Sarim ➡️ Vá até a caixa de areia. Escondido embaixo do cogumelo grande.", img: "https://imgur.com" },
+            { nome: "5. Elder Sword (Pest Control)", tele: "Minijogo Pest Control ➡️ Vá até a ponta sudeste do posto avançado, em cima de um barril.", img: "https://imgur.com" },
+            { nome: "6. Tears of Guthix", tele: "Games Necklace ➡️ Vá até as Lágrimas de Guthix. O engrama está na parede ao sul da cobra Juna.", img: "https://imgur.com" },
+            { nome: "7. Stone of Jas (Fist of Guthix)", tele: "Games Necklace ➡️ Gamer's Grotto ➡️ Fist of Guthix. Na prateleira do balcão de recompensas.", img: "https://imgur.com" },
+            { nome: "8. Sword of Edicts (Wilderness)", tele: "Magnetita do Deserto ➡️ Corra um pouco para o leste em direção à cratera de Divinação.", img: "https://imgur.com" },
+            { nome: "9. World Gate", tele: "Anel Sixth Age Circuit ➡️ Entre duas rochas logo ao norte do portal World Gate.", img: "https://imgur.com" },
+            { nome: "10. Gnome (Gnome Maze)", tele: "Magnetita de Yanille ➡️ Labirinto ao oeste. Vá até o fim do beco sem saída bem no centro.", img: "https://imgur.com" },
+            { nome: "11. Glarel's Tombstone", tele: "Capa de Pesca ou Mgt Ardougne ➡️ Noroeste até o túmulo de Glarel. Canto sudoeste da plataforma.", img: "https://imgur.com" }
         ];
 
         let indexAtual = 0;
