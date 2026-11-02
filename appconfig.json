@@ -1,7 +1,8 @@
+
 {
   "name": "GPS Engramas",
-  "version": "2.0.0",
-  "description": "Mapa interativo de engramas do Memorial to Guthix com teleportes configuráveis e progresso local.",
+  "version": "2.1.0",
+  "description": "Mapa interativo de 12 engramas, transportes categorizados, preferencias e progresso salvo.",
   "config": {
     "browser": {
       "url": "index.html",
