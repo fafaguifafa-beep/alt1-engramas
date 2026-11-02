@@ -2,90 +2,68 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>GPS de Engramas para Alt1</title>
+    <title>GPS Engramas</title>
     <style>
         body { 
-            margin: 0; padding: 0; font-family: sans-serif; background: #1e1e1e; color: #fff;
+            margin: 0; padding: 0; font-family: sans-serif; background: #1a1a1a; color: #fff;
             display: flex; flex-direction: column; height: 100vh; overflow: hidden;
         }
         #painel-controle {
-            background: #2a2a2a; padding: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); z-index: 10;
+            background: #252525; padding: 15px; border-bottom: 2px solid #333; text-align: center;
         }
-        h2 { margin: 0 0 5px 0; font-size: 16px; color: #4CAF50; }
-        p { margin: 0 0 10px 0; font-size: 13px; color: #ccc; }
+        h2 { margin: 0 0 5px 0; font-size: 16px; color: #00ff88; }
+        p { margin: 0 0 12px 0; font-size: 13px; color: #bbb; min-height: 32px; }
         button {
-            background: #4CAF50; color: white; border: none; padding: 12px;
+            background: #00ff88; color: #000; border: none; padding: 12px;
             width: 100%; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 14px;
         }
-        button:hover { background: #45a049; }
-        #mapa-container { flex-grow: 1; position: relative; }
-        iframe { width: 100%; height: 100%; border: none; }
+        button:hover { background: #00cc6c; }
+        #mapa-container { 
+            flex-grow: 1; display: flex; justify-content: center; align-items: center; background: #111; overflow: hidden;
+        }
+        img { max-width: 100%; max-height: 100%; object-fit: contain; }
     </style>
 </head>
 <body>
 
-    <!-- Painel com o Botão Superior -->
     <div id="painel-controle">
         <h2 id="engrama-nome">1. Druid (Burthorpe)</h2>
         <p id="engrama-teleporte">Teleporte: Magnetita de Burthorpe ➡️ Altar da Igreja</p>
         <button onclick="proximoEngrama()">Próximo Local ➡️</button>
     </div>
 
-    <!-- O Mapa Interativo do RuneScape -->
     <div id="mapa-container">
-        <iframe id="rs-map" src="https://runeapps.org"></iframe>
+        <img id="mapa-img" src="https://runescape.wiki" alt="Mapa">
     </div>
 
     <script>
-        // Coordenadas exatas do jogo (X, Y) para o mapa do RuneApps centralizar
         const engramas = [
-            { nome: "1. Druid (Burthorpe)", tele: "Magnetita de Burthorpe ➡️ Altar da Igreja", x: 2894, y: 3492 },
-            { nome: "2. Balanced (Falador)", tele: "Magnetita de Falador ➡️ Círculo de pedras ao norte", x: 3004, y: 3410 },
-            { nome: "3. Sheep (Lumbridge)", tele: "Magnetita de Lumbridge ➡️ Casa do Fazendeiro Fred ao norte", x: 3191, y: 3272 },
-            { nome: "4. Xanerus (Entrana)", tele: "Barco em Port Sarim ➡️ Caixa de areia embaixo do cogumelo", x: 2824, y: 3364 },
-            { nome: "5. Elder Sword (Pest Control)", tele: "Minijogo Pest Control ➡️ Ponta sudeste do posto avançado", x: 2658, y: 2642 },
-            { nome: "6. Tears of Guthix", tele: "Games Necklace ➡️ Dentro da caverna, ao sul da cobra Juna", x: 3251, y: 9517 },
-            { nome: "7. Stone of Jas (Fist of Guthix)", tele: "Games Necklace ➡️ Gamer's Grotto ➡️ Balcão de recompensas", x: 1438, y: 4692 },
-            { nome: "8. Sword of Edicts (Wilderness)", tele: "Magnetita do Deserto ➡️ Leste da cratera de Divinação", x: 3122, y: 3820 },
-            { nome: "9. World Gate", tele: "Anel Sixth Age Circuit ➡️ Entre duas rochas ao norte do portal", x: 2216, y: 3348 },
-            { nome: "10. Gnome (Gnome Maze)", tele: "Magnetita de Yanille ➡️ Fim do beco sem saída no centro do labirinto", x: 2530, y: 3163 },
-            { nome: "11. Glarel's Tombstone", tele: "Guilda dos Pescadores ou Mgt Ardougne ➡️ Canto sudoeste do túmulo", x: 2555, y: 3444 }
+            { nome: "1. Druid (Burthorpe)", tele: "Magnetita de Burthorpe ➡️ Entre na igreja logo ao norte, em cima do altar.", img: "https://runescape.wiki" },
+            { nome: "2. Balanced (Falador)", tele: "Magnetita de Falador ➡️ Corra para o norte (saída da cidade), suba até o círculo de pedras.", img: "https://runescape.wiki" },
+            { nome: "3. Sheep (Lumbridge)", tele: "Magnetita de Lumbridge ➡️ Corra para o norte até a fazenda. Na mesa da casa do Fred.", img: "https://runescape.wiki" },
+            { nome: "4. Xanerus (Entrana)", tele: "Barco em Port Sarim ➡️ Vá até a caixa de areia. Escondido embaixo do cogumelo grande.", img: "https://runescape.wiki" },
+            { nome: "5. Elder Sword (Pest Control)", tele: "Minijogo Pest Control ➡️ Vá até a ponta sudeste do posto avançado, em cima de um barril.", img: "https://runescape.wiki" },
+            { nome: "6. Tears of Guthix", tele: "Games Necklace ➡️ Vá até as Lágrimas de Guthix. O engrama está logo ao sul da cobra Juna.", img: "https://runescape.wiki" },
+            { nome: "7. Stone of Jas (Fist of Guthix)", tele: "Games Necklace (Gamer's Grotto) ➡️ Fist of Guthix. Prateleira de cima do balcão de recompensas.", img: "https://runescape.wiki" },
+            { nome: "8. Sword of Edicts (Wilderness)", tele: "Magnetita do Deserto ➡️ Corra um pouco para o leste em direção à cratera de Divinação.", img: "https://runescape.wiki" },
+            { nome: "9. World Gate", tele: "Anel Sixth Age Circuit ➡️ Entre duas rochas logo ao norte do portal World Gate.", img: "https://runescape.wiki" },
+            { nome: "10. Gnome (Gnome Maze)", tele: "Magnetita de Yanille ➡️ Labirinto dos Gnomos ao oeste. Fim do beco sem saída no centro.", img: "https://runescape.wiki" },
+            { nome: "11. Glarel's Tombstone", tele: "Capa de Pesca ou Mgt Ardougne ➡️ Noroeste até o túmulo de Glarel. Canto sudoeste da plataforma.", img: "https://runescape.wiki" }
         ];
 
         let indexAtual = 0;
-        const iframe = document.getElementById('rs-map');
-
-        // Função que manda comandos para dentro do mapa interativo
-        function moverMapaPara(x, y) {
-            // Cria a marcação vermelha temporária e centraliza o mapa usando a API do RuneApps
-            const comando = {
-                type: "setlocation",
-                x: x,
-                y: y,
-                zoom: 4, // Nível de zoom aproximado
-                marker: true // Desenha um marcador no local
-            };
-            iframe.contentWindow.postMessage(JSON.stringify(comando), "*");
-        }
 
         function atualizarInterface() {
             const atual = engramas[indexAtual];
             document.getElementById("engrama-nome").innerText = atual.nome;
             document.getElementById("engrama-teleporte").innerText = "Teleporte: " + atual.tele;
-            
-            // Move o mapa na tela
-            moverMapaPara(atual.x, atual.y);
+            document.getElementById("mapa-img").src = atual.img;
         }
 
         function proximoEngrama() {
             indexAtual = (indexAtual + 1) % engramas.length;
             atualizarInterface();
         }
-
-        // Aguarda o mapa carregar para centralizar no primeiro ponto
-        iframe.onload = function() {
-            setTimeout(atualizarInterface, 1000);
-        };
     </script>
 </body>
 </html>
