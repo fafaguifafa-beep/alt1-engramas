@@ -1,0 +1,12 @@
+{
+	"name": "GPS Engramas",
+	"version": "1.0.0",
+	"description": "Lista de engramas com movimentação automática de mapa.",
+	"config": {
+		"browser": {
+			"url": "index.html",
+			"width": 300,
+			"height": 600
+		}
+	}
+}
