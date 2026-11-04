@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GPS Engramas v5.2 — Alt1</title>
+<title>GPS Engramas v5.3 — Alt1</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 :root{font:13px system-ui,Segoe UI,Arial,sans-serif;color:#e9f6ef;background:#101c1a}
@@ -61,464 +61,1348 @@ const COLLISION=RAW+'/static/map/collision/';
 const TILES='https://raw.githubusercontent.com/mejrs/layers_rs3/refs/heads/master/map_squares';
 const STORE='gps-engramas-v5';
 
-// Destinos fixos: regiões descritas pela Wiki; coordenadas numéricas ainda não verificadas tile a tile.
+// Coordenadas fixas dos 12 marcadores da Wiki.
 const E=[
- {id:'druid',n:'Druid',area:'Taverley',m:28,x:2913,y:3465,where:'No chão, a sudeste do Altar de Guthix no círculo dos druidas.',routes:[['home','taverley','Da magnetita de Taverley, vá a nordeste até o altar.'],['home','burthorpe','Da magnetita de Burthorpe, siga para sul até Taverley.']]},
- {id:'balance',n:'Balance Elemental',area:'Falador',m:28,x:3038,y:3403,where:'Na pedra central do círculo de pedras, diretamente a leste da magnetita de Falador. (Ponto estimado visualmente pela imagem da Wiki.)',routes:[['home','falador','Siga para leste da magnetita de Falador.'],['skullsceptre','outside','Do teleporte do Skull sceptre, vá para sudoeste.']]},
- {id:'sheep',n:'Sheep',area:'Lumbridge',m:28,x:3194,y:3276,where:'Sobre a mesa oeste da casa de Fred the Farmer, ao norte do mercado.',routes:[['normalspellbook','lumbridge','Use Lumbridge Teleport e siga para norte.'],['home','lumbridge','Da magnetita de Lumbridge, vá para norte.']]},
- {id:'fairy',n:'Fairy',area:'Zanaris',m:1,x:2442,y:4445,where:'Debaixo do cogumelo a noroeste da caixa de areia em Zanaris.',req:'Acesso a Zanaris (Lost City).',routes:[['fairyring','AIP','Entre em Zanaris por um anel de fada e vá para leste até a caixa de areia.']]},
- {id:'elder',n:'Elder Sword',area:'Void Knights’ Outpost',m:28,x:2669,y:2673,where:'Sobre um barril a leste do banco, debaixo do toldo no sudeste da ilha.',routes:[['home','portsarim','Em Port Sarim, procure o escudeiro a leste e escolha Travel. Na ilha, vá para sudeste.']]},
- {id:'guardians',n:'Guardians of Guthix',area:'Tears of Guthix',m:634,x:3232,y:9504,where:'No chão, ao sul de Juna, perto das estalagmites.',routes:[['gamesnecklace','tearsofguthix','No Games necklace, escolha 7 (Tears of Guthix). Vá para sul de Juna.']]},
- {id:'jas',n:'Stone of Jas',area:'Fist of Guthix',m:105,x:1696,y:5600,where:'Na prateleira da parede norte da área de recompensas.',routes:[['ringofduelling','fistofguthix','No Ring of duelling, escolha 4 (Fist of Guthix) e entre pelo portal sudoeste.'],['home','falador','De Falador, vá a leste até Gamers’ Grotto; entre pelo portal sudoeste.']]},
- {id:'edicts',n:'Sword of Edicts',area:'Wilderness Crater',m:28,x:3127,y:3700,where:'No chão, a leste da espada gigante no centro da cratera.',req:'Cuidado com inimigos na Wilderness.',routes:[['home','wilderness','Da magnetita Wilderness, corra para norte até a cratera.']]},
- {id:'world',n:'World Gate',area:'World Gate',m:28,x:2367,y:3365,where:'Entre duas rochas ao norte do World Gate, a noroeste de três pequenos lagos. (Ponto ainda não calibrado.)',req:'Coordenada deste engrama ainda não confirmada; não interpretar rota visual como exata.',routes:[['sixthage','worldgate','No Sixth-Age circuit, use a opção 2 (World Gate) e siga para norte.'],['travellersnecklace','outpost','No Traveller’s necklace, use a opção 2 (Outpost) e siga para oeste.'],['home','eaglespeak','Da magnetita Eagles’ Peak, vá para sul até World Gate.']]},
- {id:'gnome',n:'Gnome',area:'Gnome Maze',m:28,x:2518,y:3173,where:'No beco sem saída no centro-sul do labirinto.',req:'Labirinto com passagens; caminho dentro dele depende da entrada.',routes:[['normalspellbook','watchtower-yanille','Vá ao norte até a entrada sudeste do Gnome Maze.'],['home','yanille','Vá ao norte até a entrada noroeste do labirinto.']]},
- {id:'time',n:'Time',area:'Glarial’s Tombstone',m:28,x:2556,y:3440,where:'Debaixo de um arbusto ao sul e oeste da lápide de Glarial.',routes:[['luckofthedwarves','outpost','Com Dark Facet of Luck, escolha 4 (Dwarven Outpost); vá para sudoeste.'],['skillsnecklace','fishing','No Skills necklace, escolha 1 (Fishing Guild), depois vá a noroeste.'],['home','ardougne','Da magnetita de Ardougne, siga para noroeste além da Fishing Guild.']]},
- {id:'naragi',n:'Naragi',area:'Naragun',m:649,x:2016,y:5984,where:'Da saída AIS, siga para norte e depois oeste, até a casa de Guthix.',req:'No tutorial é entregue por Orla; no prestígio, exige acesso por The World Wakes.',routes:[['fairyring','AIS','Use anel de fada AIS; vá para norte e depois oeste até o fim do caminho.']]}
+ {id:'druid',n:'Druid',area:'Taverley',m:28,x:2924,y:3481,where:'No chão, a sudeste do Altar de Guthix no círculo dos druidas.',routes:[['home','taverley','Da magnetita de Taverley, vá a nordeste até o altar.'],['home','burthorpe','Da magnetita de Burthorpe, siga para sul até Taverley.']]},
+ {id:'balance',n:'Balance Elemental',area:'Falador',m:28,x:3038,y:3399,where:'Na pedra central do círculo de pedras, diretamente a leste da magnetita de Falador.',routes:[['home','falador','Siga para leste da magnetita de Falador.'],['skullsceptre','outside','Do teleporte do Skull sceptre, vá para sudoeste.']]},
+ {id:'sheep',n:'Sheep',area:'Lumbridge',m:28,x:3203,y:3292,where:'Sobre a mesa oeste da casa de Fred the Farmer, ao norte do mercado.',routes:[['normalspellbook','lumbridge','Use Lumbridge Teleport e siga para norte.'],['home','lumbridge','Da magnetita de Lumbridge, vá para norte.']]},
+ {id:'fairy',n:'Fairy',area:'Zanaris',m:1,x:2437,y:4444,where:'Debaixo do cogumelo a noroeste da caixa de areia em Zanaris.',req:'Acesso a Zanaris (Lost City).',routes:[['fairyring','AIP','Entre em Zanaris por um anel de fada e vá para leste até a caixa de areia.']]},
+ {id:'elder',n:'Elder Sword',area:'Void Knights’ Outpost',m:28,x:2677,y:2648,where:'Sobre um barril a leste do banco, debaixo do toldo no sudeste da ilha.',routes:[['home','portsarim','Em Port Sarim, procure o escudeiro a leste e escolha Travel. Na ilha, vá para sudeste.']]},
+ {id:'guardians',n:'Guardians of Guthix',area:'Tears of Guthix',m:634,x:3243,y:9499,where:'No chão, ao sul de Juna, perto das estalagmites.',routes:[['gamesnecklace','tearsofguthix','No Games necklace, escolha 7 (Tears of Guthix). Vá para sul de Juna.']]},
+ {id:'jas',n:'Stone of Jas',area:'Fist of Guthix',m:105,x:1699,y:5606,where:'Na prateleira da parede norte da área de recompensas.',routes:[['ringofduelling','fistofguthix','No Ring of duelling, escolha 4 (Fist of Guthix) e entre pelo portal sudoeste.'],['home','falador','De Falador, vá a leste até Gamers’ Grotto; entre pelo portal sudoeste.']]},
+ {id:'edicts',n:'Sword of Edicts',area:'Wilderness Crater',m:28,x:3143,y:3712,where:'No chão, a leste da espada gigante no centro da cratera.',req:'Cuidado com inimigos na Wilderness.',routes:[['home','wilderness','Da magnetita Wilderness, corra para norte até a cratera.']]},
+ {id:'world',n:'World Gate',area:'World Gate',m:28,x:2375,y:3361,where:'Entre duas rochas ao norte do World Gate, a noroeste de três pequenos lagos.',routes:[['sixthage','worldgate','No Sixth-Age circuit, use a opção 2 (World Gate) e siga para norte.'],['travellersnecklace','outpost','No Traveller’s necklace, use a opção 2 (Outpost) e siga para oeste.'],['home','eaglespeak','Da magnetita Eagles’ Peak, vá para sul até World Gate.']]},
+ {id:'gnome',n:'Gnome',area:'Gnome Maze',m:28,x:2529,y:3148,where:'No beco sem saída no centro-sul do labirinto.',req:'Labirinto com passagens; caminho dentro dele depende da entrada.',routes:[['normalspellbook','watchtower-yanille','Vá ao norte até a entrada sudeste do Gnome Maze.'],['home','yanille','Da magnetita de Yanille, vá ao norte até a entrada noroeste do labirinto.']]},
+ {id:'time',n:'Time',area:'Glarial’s Tombstone',m:28,x:2556,y:3441,where:'Debaixo de um arbusto ao sul e oeste da lápide de Glarial.',routes:[['luckofthedwarves','outpost','Com Dark Facet of Luck, escolha 4 (Dwarven Outpost); vá para sudoeste.'],['skillsnecklace','fishing','No Skills necklace, escolha 1 (Fishing Guild), depois vá a noroeste.'],['home','ardougne','Da magnetita de Ardougne, siga para noroeste além da Fishing Guild.']]},
+ {id:'naragi',n:'Naragi',area:'Naragun',m:649,x:1994,y:6007,where:'Da saída AIS, siga para norte e depois oeste, até a casa de Guthix.',req:'No tutorial é entregue por Orla; no prestígio, exige acesso por The World Wakes.',routes:[['fairyring','AIS','Use anel de fada AIS; vá para norte e depois oeste até o fim do caminho.']]}
 ];
-function read(k){try{return JSON.parse(localStorage.getItem(k))||{}}catch(_){return {}}}
-const prev=read('gps-engramas-v4'),v2=read('gps-engramas-v2'),latest=read(STORE);
+
+function read(k){
+ try{return JSON.parse(localStorage.getItem(k))||{}}
+ catch(_){return {}}
+}
+
+const prev=read('gps-engramas-v4');
+const v2=read('gps-engramas-v2');
+const latest=read(STORE);
+
 let state={
  index:latest.index??prev.index??v2.index??0,
  prestige:latest.prestige??prev.prestige??v2.prestige??1,
  done:latest.done??prev.done??v2.done??{},
  selected:latest.selected??prev.selected??{},
- enabled:latest.enabled??prev.enabled??{home:true,normalspellbook:true,ringofduelling:true,gamesnecklace:true,fairyring:true,sixthage:true,skillsnecklace:true,travellersnecklace:true,luckofthedwarves:true},
+ enabled:latest.enabled??prev.enabled??{
+  home:true,normalspellbook:true,ringofduelling:true,
+  gamesnecklace:true,fairyring:true,sixthage:true,
+  skillsnecklace:true,travellersnecklace:true,
+  luckofthedwarves:true
+ },
  showTP:latest.showTP??prev.showTP??true,
  showAll:latest.showAll??prev.showAll??false,
  showPath:latest.showPath??true,
  compact:latest.compact??prev.compact??false,
  autoRoute:latest.autoRoute??true
 };
+
 state.index=Math.max(0,Math.min(11,state.index));
-function persist(){try{localStorage.setItem(STORE,JSON.stringify(state))}catch(e){console.warn(e)}}
+
+function persist(){
+ try{localStorage.setItem(STORE,JSON.stringify(state))}
+ catch(e){console.warn(e)}
+}
+
 const current=()=>E[state.index];
-// Coordenadas da Wiki só substituem referências se vierem
-// explicitamente de um mapa no artigo do respectivo engrama.
-const wikiPositions={};
-const WIKI_CACHE='gps-engramas-wiki-map-v1';
-const point=e=>wikiPositions[e.id]||{x:e.x,y:e.y,m:e.m,verified:false};
 
-function findWikiPoint(wikitext,e){
- // Procura templates de mapa; evita usar coordenadas soltas em textos.
- const candidates=[];
- const templates=[...wikitext.matchAll(/\{\{(?:Object[ _]map|Map|Maplink|Maplink\/multi)[\s\S]{0,4500}?\}\}/gi)];
- for(const match of templates){
-  const t=match[0];
-  // Formato comum: objectid:106331,x:3038,y:3403
-  for(const x of t.matchAll(/(?:objectid\s*:\s*\d+|\bobjectid\s*=\s*\d+)[^\n}\]]{0,180}?\bx\s*[:=]\s*(\d{3,5})\s*[,|]\s*y\s*[:=]\s*(\d{3,5})/gi)){
-   candidates.push({x:+x[1],y:+x[2]});
-  }
-  // Mapa que declara x/y diretamente.
-  const xx=/\|\s*x\s*=\s*(\d{3,5})\b/i.exec(t);
-  const yy=/\|\s*y\s*=\s*(\d{3,5})\b/i.exec(t);
-  if(xx&&yy)candidates.push({x:+xx[1],y:+yy[1]});
- }
- const valid=candidates.filter(c=>
-  Number.isFinite(c.x)&&Number.isFinite(c.y)&&
-  Math.abs(c.x-e.x)<500&&Math.abs(c.y-e.y)<500
- );
- if(valid.length!==1)return null;
- return {...valid[0],m:e.m,verified:true};
-}
-async function syncWikiPositions(){
- // Usa cache verificável, não posições salvas manualmente.
- const cached=read(WIKI_CACHE);
- if(cached.positions&&Date.now()-cached.ts<7*86400000){
-  Object.assign(wikiPositions,cached.positions);
-  render();
-  return;
- }
- try{
-  const articles=E.map(e=>e.n.replaceAll(' ','_')+'_engram');
-  const url=new URL('https://runescape.wiki/api.php');
-  url.searchParams.set('action','query');
-  url.searchParams.set('prop','revisions');
-  url.searchParams.set('rvprop','content');
-  url.searchParams.set('rvslots','main');
-  url.searchParams.set('titles',articles.join('|'));
-  url.searchParams.set('origin','*');
-  url.searchParams.set('format','json');
-  const response=await fetch(url.toString());
-  if(!response.ok)throw new Error('Wiki HTTP '+response.status);
-  const data=await response.json();
-  let found={};
-  for(const page of Object.values(data.query?.pages||{})){
-   const title=(page.title||'').replaceAll(' ','_').toLowerCase();
-   const e=E.find(x=>(x.n.replaceAll(' ','_')+'_engram').toLowerCase()===title);
-   if(!e)continue;
-   const rev=page.revisions?.[0];
-   const wikitext=rev?.slots?.main?.['*']||rev?.['*']||'';
-   const loc=findWikiPoint(wikitext,e);
-   if(loc)found[e.id]=loc;
-  }
-  Object.assign(wikiPositions,found);
-  try{localStorage.setItem(WIKI_CACHE,JSON.stringify({ts:Date.now(),positions:found}));}catch(_){}
-  if(Object.keys(found).length)render();
- }catch(error){
-  console.info('Coordenadas Wiki indisponíveis; mostrando referências locais.',error);
- }
-}
- // Nunca lê nem salva pinos manuais.
-let groups=[],spots=[],map=null,baseTile=null,tpLayer=null,destPin=null,pathLayer=null,activeMap=null;
-let pathEpoch=0,pathResults=[],activeRoute=null,pathMessage='';
+// Pinos fixos da Wiki: ajustes manuais antigos são ignorados.
+const point=e=>({
+ x:e.x,
+ y:e.y,
+ m:e.m,
+ verified:true
+});
 
-// Analisa somente texto do arquivo TypeScript, sem executar conteúdo remoto.
+let groups=[];
+let spots=[];
+let map=null;
+let baseTile=null;
+let tpLayer=null;
+let destPin=null;
+let pathLayer=null;
+let activeMap=null;
+let pathEpoch=0;
+let pathResults=[];
+let pathMessage='';
+
+// ====================================================
+// BASE DE TELEPORTES
+// ====================================================
+
 function closeAt(s,start,op,cl){
  let dep=0,q='',com='';
+
  for(let i=start;i<s.length;i++){
   let c=s[i],n=s[i+1];
-  if(com==='line'){if(c==='\n')com='';continue}
-  if(com==='block'){if(c==='*'&&n==='/'){i++;com=''}continue}
-  if(q){if(c==='\\'){i++;continue}if(c===q)q='';continue}
+
+  if(com==='line'){
+   if(c==='\n')com='';
+   continue;
+  }
+
+  if(com==='block'){
+   if(c==='*'&&n==='/'){i++;com=''}
+   continue;
+  }
+
+  if(q){
+   if(c==='\\'){i++;continue}
+   if(c===q)q='';
+   continue;
+  }
+
   if(c==='/'&&n==='/'){i++;com='line';continue}
   if(c==='/'&&n==='*'){i++;com='block';continue}
-  if(c==='"'||c==="'"||c==='`'){q=c;continue}
+
+  if(c==='"'||c==="'"||c==='`'){
+   q=c;
+   continue;
+  }
+
   if(c===op)dep++;
   if(c===cl&&--dep===0)return i;
- }return -1;
+ }
+
+ return -1;
 }
-function objList(s){let out=[],p=0;while(p<s.length){let a=s.indexOf('{',p);if(a<0)break;let b=closeAt(s,a,'{','}');if(b<0)break;out.push(s.slice(a,b+1));p=b+1}return out}
-function prop(s,k){let m=new RegExp(String.raw`\b${k}\s*:\s*(?:"([^"]*)"|'([^']*)')`).exec(s);return m?(m[1]??m[2]):''}
-function icon(s){let m=/\bimg\s*:\s*\{\s*url\s*:\s*(?:"([^"]*)"|'([^']*)')/.exec(s);return m?(m[1]??m[2]):''}
-function origin(s){let m=/(?:"?origin"?)\s*:\s*\{\s*"?x"?\s*:\s*(-?\d+)\s*,\s*"?y"?\s*:\s*(-?\d+)\s*,\s*"?level"?\s*:\s*(-?\d+)/.exec(s);return m?{x:+m[1],y:+m[2],level:+m[3]}:null}
+
+function objList(s){
+ let out=[],p=0;
+
+ while(p<s.length){
+  let a=s.indexOf('{',p);
+  if(a<0)break;
+
+  let b=closeAt(s,a,'{','}');
+  if(b<0)break;
+
+  out.push(s.slice(a,b+1));
+  p=b+1;
+ }
+
+ return out;
+}
+
+function prop(s,k){
+ let m=new RegExp(
+  String.raw`\b${k}\s*:\s*(?:"([^"]*)"|'([^']*)')`
+ ).exec(s);
+
+ return m?(m[1]??m[2]):'';
+}
+
+function icon(s){
+ let m=/\bimg\s*:\s*\{\s*url\s*:\s*(?:"([^"]*)"|'([^']*)')/.exec(s);
+ return m?(m[1]??m[2]):'';
+}
+
+function origin(s){
+ let m=/(?:"?origin"?)\s*:\s*\{\s*"?x"?\s*:\s*(-?\d+)\s*,\s*"?y"?\s*:\s*(-?\d+)\s*,\s*"?level"?\s*:\s*(-?\d+)/.exec(s);
+
+ return m?{
+  x:+m[1],
+  y:+m[2],
+  level:+m[3]
+ }:null;
+}
+
 function parseTeleports(s){
- let st=s.indexOf('= [',s.indexOf('const raw_data'));if(st<0)throw Error('Formato desconhecido');let a=st+2,b=closeAt(s,a,'[',']');
- if(b<0)throw Error('Arquivo incompleto');let gs=[],ss=[];
+ let st=s.indexOf(
+  '= [',
+  s.indexOf('const raw_data')
+ );
+
+ if(st<0)throw Error('Formato desconhecido');
+
+ let a=st+2;
+ let b=closeAt(s,a,'[',']');
+
+ if(b<0)throw Error('Arquivo incompleto');
+
+ let gs=[],ss=[];
+
  for(let group of objList(s.slice(a+1,b))){
   if(!/\btype\s*:\s*['"]teleports['"]/.test(group))continue;
-  let match=/\bspots\s*:\s*\[/.exec(group);if(!match)continue;
-  let p=group.indexOf('[',match.index),e=closeAt(group,p,'[',']');if(e<0)continue;
-  let head=group.slice(0,match.index),tail=group.slice(e+1),id=prop(head,'id'),name=prop(head,'name')||id,im=icon(head)||icon(tail);
-  if(!id)continue;gs.push({id,name});
+
+  let match=/\bspots\s*:\s*\[/.exec(group);
+  if(!match)continue;
+
+  let p=group.indexOf('[',match.index);
+  let e=closeAt(group,p,'[',']');
+  if(e<0)continue;
+
+  let head=group.slice(0,match.index);
+  let tail=group.slice(e+1);
+
+  let id=prop(head,'id');
+  let name=prop(head,'name')||id;
+  let im=icon(head)||icon(tail);
+
+  if(!id)continue;
+
+  gs.push({id,name});
+
   for(let one of objList(group.slice(p+1,e))){
-   let o=origin(one);if(!o)continue;
-   ss.push({...o,group:id,groupName:name,id:prop(one,'id'),name:prop(one,'name')||name,code:prop(one,'code'),icon:icon(one)||im});
+   let o=origin(one);
+   if(!o)continue;
+
+   ss.push({
+    ...o,
+    group:id,
+    groupName:name,
+    id:prop(one,'id'),
+    name:prop(one,'name')||name,
+    code:prop(one,'code'),
+    icon:icon(one)||im
+   });
   }
  }
- if(ss.length<400)throw Error('Destinos insuficientes');return {groups:gs,spots:ss};
+
+ if(ss.length<400)throw Error('Destinos insuficientes');
+
+ return {groups:gs,spots:ss};
 }
+
 async function loadTeleports(){
  try{
   let data=read('gps-transportes-cache-v1');
+
   if(data.spots?.length<400||!data.spots){
-   let r=await fetch(TELE_DATA);if(!r.ok)throw Error('HTTP '+r.status);
+   let r=await fetch(TELE_DATA);
+   if(!r.ok)throw Error('HTTP '+r.status);
+
    data=parseTeleports(await r.text());
-   try{localStorage.setItem('gps-transportes-cache-v1',JSON.stringify(data))}catch(_){}
+
+   try{
+    localStorage.setItem(
+     'gps-transportes-cache-v1',
+     JSON.stringify(data)
+    );
+   }catch(_){}
   }
-  groups=data.groups;spots=data.spots;
+
+  groups=data.groups;
+  spots=data.spots;
+
   $('msg').textContent=spots.length+' destinos de teleporte';
- }catch(err){$('msg').textContent='Teleporte indisponível: '+err.message}
- renderText();drawTeleports();await calculateRoutes();
+ }catch(err){
+  $('msg').textContent='Teleporte indisponível: '+err.message;
+ }
+
+ renderText();
+ drawTeleports();
+ await calculateRoutes();
 }
+
 function teleMap(t){
  if(t.group==='fairyring'&&t.id==='AIP')return 1;
  if(t.group==='fairyring'&&t.id==='AIS')return 649;
+
  if(t.x>=1664&&t.x<=1728&&t.y>=5568&&t.y<=5632)return 105;
  if(t.x>=3200&&t.x<=3264&&t.y>=9472&&t.y<=9536)return 634;
  if(t.x>=2368&&t.x<=2512&&t.y>=4352&&t.y<=4488)return 1;
  if(t.x>=1984&&t.x<=2048&&t.y>=5952&&t.y<=6016)return 649;
- if(t.level===0&&t.x>=1800&&t.x<=5800&&t.y>=2400&&t.y<=4600)return 28;
+
+ if(
+  t.level===0 &&
+  t.x>=1800&&t.x<=5800 &&
+  t.y>=2400&&t.y<=4600
+ )return 28;
+
  return -1;
 }
-function routeKey(r){return r[0]+':'+r[1]}
-function teleportOf(r){return spots.find(t=>t.group===r[0]&&t.id===r[1])}
-function usable(e){return e.routes.filter(r=>state.enabled[r[0]]===true)}
+
+function routeKey(r){
+ return r[0]+':'+r[1];
+}
+
+function teleportOf(r){
+ return spots.find(t=>
+  t.group===r[0]&&t.id===r[1]
+ );
+}
+
+function usable(e){
+ return e.routes.filter(r=>
+  state.enabled[r[0]]===true
+ );
+}
+
 function preferredRoute(e){
- const options=usable(e);if(!options.length)return e.routes[0];
- const chosen=options.find(r=>routeKey(r)===state.selected[e.id]);if(chosen)return chosen;
+ const options=usable(e);
+
+ if(!options.length)return e.routes[0];
+
+ const chosen=options.find(r=>
+  routeKey(r)===state.selected[e.id]
+ );
+
+ if(chosen)return chosen;
+
  if(state.autoRoute){
-  const found=pathResults.filter(p=>p.engram===e.id&&p.path?.length>0&&options.some(r=>routeKey(r)===p.key)).sort((a,b)=>a.steps-b.steps);
-  if(found.length)return options.find(r=>routeKey(r)===found[0].key);
+  const found=pathResults
+   .filter(p=>
+    p.engram===e.id &&
+    p.path?.length>0 &&
+    options.some(r=>routeKey(r)===p.key)
+   )
+   .sort((a,b)=>a.steps-b.steps);
+
+  if(found.length){
+   return options.find(r=>routeKey(r)===found[0].key);
+  }
  }
+
  return options[0];
 }
+
 function tpIcon(t,best){
- const container=document.createElement('div');container.className='tp'+(best?' best':'');
- const fallback=document.createElement('span');fallback.className='fallback';fallback.textContent='✦';
- if(t.icon){const image=document.createElement('img');image.src=ICONS+encodeURIComponent(t.icon);image.alt='';image.onerror=()=>{image.remove();container.prepend(fallback)};container.append(image)}else container.append(fallback);
- if(t.code){const span=document.createElement('span');span.className='key';span.textContent=t.code;container.append(span)}
- return L.divIcon({className:'',html:container,iconSize:[30,30],iconAnchor:[15,15]});
+ const container=document.createElement('div');
+ container.className='tp'+(best?' best':'');
+
+ const fallback=document.createElement('span');
+ fallback.className='fallback';
+ fallback.textContent='✦';
+
+ if(t.icon){
+  const image=document.createElement('img');
+  image.src=ICONS+encodeURIComponent(t.icon);
+  image.alt='';
+
+  image.onerror=()=>{
+   image.remove();
+   container.prepend(fallback);
+  };
+
+  container.append(image);
+ }else{
+  container.append(fallback);
+ }
+
+ if(t.code){
+  const span=document.createElement('span');
+  span.className='key';
+  span.textContent=t.code;
+  container.append(span);
+ }
+
+ return L.divIcon({
+  className:'',
+  html:container,
+  iconSize:[30,30],
+  iconAnchor:[15,15]
+ });
 }
+
+// ====================================================
+// MAPA
+// ====================================================
+
 function setupMap(){
  if(map||typeof L==='undefined')return;
- map=L.map('map',{crs:L.CRS.Simple,zoomControl:true,minZoom:-3,maxZoom:4,zoomSnap:1,attributionControl:true});
+
+ map=L.map('map',{
+  crs:L.CRS.Simple,
+  zoomControl:true,
+  minZoom:-3,
+  maxZoom:4,
+  zoomSnap:1,
+  attributionControl:true
+ });
+
  pathLayer=L.layerGroup().addTo(map);
  tpLayer=L.layerGroup().addTo(map);
+
  map.on('moveend zoomend',drawTeleports);
 }
+
 function drawMap(){
- setupMap();if(!map){$('msg').textContent='Mapa indisponível (Leaflet não carregou)';return}
- const e=current(),p=point(e);
+ setupMap();
+
+ if(!map){
+  $('msg').textContent='Mapa indisponível';
+  return;
+ }
+
+ const e=current();
+ const p=point(e);
+
  if(activeMap!==e.m){
   if(baseTile)map.removeLayer(baseTile);
-  const Tile=L.TileLayer.extend({getTileUrl(c){return `${TILES}/${e.m}/${c.z}/0_${c.x}_${-1-c.y}.png`}});
-  baseTile=new Tile('',{tileSize:256,minZoom:-3,maxZoom:4,maxNativeZoom:3,noWrap:true,attribution:'Mapa: mejrs / RuneScape Wiki • © Jagex'}).addTo(map);
+
+  const Tile=L.TileLayer.extend({
+   getTileUrl(c){
+    return `${TILES}/${e.m}/${c.z}/0_${c.x}_${-1-c.y}.png`;
+   }
+  });
+
+  baseTile=new Tile('',{
+   tileSize:256,
+   minZoom:-3,
+   maxZoom:4,
+   maxNativeZoom:3,
+   noWrap:true,
+   attribution:'Mapa: mejrs / RuneScape Wiki • © Jagex'
+  }).addTo(map);
+
   activeMap=e.m;
  }
+
  if(destPin)destPin.remove();
- destPin=L.marker([p.y,p.x],{icon:L.divIcon({className:'',html:'<div class="dest"></div>',iconSize:[21,21],iconAnchor:[10,10]}),zIndexOffset:1000}).addTo(map);
- destPin.bindPopup(`${e.n} — ${e.where} (coordenada em revisão)`);
- map.setView([p.y,p.x],e.m===28?2:3,{animate:false});
+
+ destPin=L.marker([p.y,p.x],{
+  icon:L.divIcon({
+   className:'',
+   html:'<div class="dest"></div>',
+   iconSize:[21,21],
+   iconAnchor:[10,10]
+  }),
+  zIndexOffset:1000
+ }).addTo(map);
+
+ destPin.bindPopup(
+  `${e.n} — ${e.where} (X: ${p.x}, Y: ${p.y} — marcador da Wiki)`
+ );
+
+ map.setView(
+  [p.y,p.x],
+  e.m===28?2:3,
+  {animate:false}
+ );
+
  setTimeout(()=>map.invalidateSize(),60);
- drawTeleports();drawRoute();
+
+ drawTeleports();
+ drawRoute();
 }
+
 function drawTeleports(){
- if(!map||!tpLayer)return;tpLayer.clearLayers();if(!state.showTP)return;
- let e=current(),r=preferredRoute(e),bounds=map.getBounds().pad(.3);
+ if(!map||!tpLayer)return;
+
+ tpLayer.clearLayers();
+ if(!state.showTP)return;
+
+ let e=current();
+ let r=preferredRoute(e);
+ let bounds=map.getBounds().pad(.3);
+
  for(let t of spots){
-  if(state.enabled[t.group]!==true||teleMap(t)!==e.m)continue;
-  if(!state.showAll&&!e.routes.some(x=>x[0]===t.group&&x[1]===t.id))continue;
+  if(
+   state.enabled[t.group]!==true ||
+   teleMap(t)!==e.m
+  )continue;
+
+  if(
+   !state.showAll &&
+   !e.routes.some(x=>
+    x[0]===t.group&&x[1]===t.id
+   )
+  )continue;
+
   if(!bounds.contains([t.y,t.x]))continue;
+
   const isBest=routeKey(r)===t.group+':'+t.id;
-  let marker=L.marker([t.y,t.x],{icon:tpIcon(t,isBest),title:t.groupName+' — '+t.name,zIndexOffset:isBest?800:0}).addTo(tpLayer);
+
+  let marker=L.marker([t.y,t.x],{
+   icon:tpIcon(t,isBest),
+   title:t.groupName+' — '+t.name,
+   zIndexOffset:isBest?800:0
+  }).addTo(tpLayer);
+
   let popup=document.createElement('div');
-  let heading=document.createElement('b');heading.textContent=t.groupName+' — '+t.name;popup.append(heading);
-  let code=document.createElement('div');code.textContent=t.code?'Opção: '+t.code:'Sem tecla fixa';popup.append(code);
+  let heading=document.createElement('b');
+  heading.textContent=t.groupName+' — '+t.name;
+  popup.append(heading);
+
+  let code=document.createElement('div');
+  code.textContent=t.code
+   ?'Opção: '+t.code
+   :'Sem tecla fixa';
+
+  popup.append(code);
+
   if(e.routes.some(x=>x[0]===t.group&&x[1]===t.id)){
-   let choose=document.createElement('button');choose.textContent='Usar este teleporte';
-   choose.onclick=()=>{state.selected[e.id]=t.group+':'+t.id;persist();renderText();drawRoute();drawTeleports();map.closePopup()};popup.append(choose);
+   let choose=document.createElement('button');
+   choose.textContent='Usar este teleporte';
+
+   choose.onclick=()=>{
+    state.selected[e.id]=t.group+':'+t.id;
+    persist();
+    renderText();
+    drawRoute();
+    drawTeleports();
+    map.closePopup();
+   };
+
+   popup.append(choose);
   }
+
   marker.bindPopup(popup);
  }
 }
 
-// Caminho A* baseado nas oito direções de movimento por tile.
-// Dados compactados em blocos 1280x1280. O byte de cada tile indica
-// W,N,E,S,NW,NE,SE,SW nos bits 0..7.
-const SIZE=1280,DIRS=[[-1,0,1],[0,1,2],[1,0,4],[0,-1,8],[-1,1,16],[1,1,32],[1,-1,64],[-1,-1,128]];
+// ====================================================
+// A* — CAMINHOS COM COLISÃO
+// ====================================================
+
+const SIZE=1280;
+
+const DIRS=[
+ [-1,0,1],
+ [0,1,2],
+ [1,0,4],
+ [0,-1,8],
+ [-1,1,16],
+ [1,1,32],
+ [1,-1,64],
+ [-1,-1,128]
+];
+
 const collisionCache=new Map();
+
 async function collisionFile(fx,fy,level){
  const k=`${fx}-${fy}-${level}`;
+
  if(!collisionCache.has(k)){
   collisionCache.set(k,(async()=>{
-   if(typeof pako==='undefined')throw Error('Descompactador indisponível');
+   if(typeof pako==='undefined'){
+    throw Error('Descompactador indisponível');
+   }
+
    const url=`${COLLISION}collision-${k}.bin`;
-   const r=await fetch(url);if(!r.ok)throw Error('Colisão HTTP '+r.status);
-   const bytes=pako.inflate(new Uint8Array(await r.arrayBuffer()));
-   if(bytes.length!==SIZE*SIZE)throw Error('Arquivo de colisão incompatível');
+   const r=await fetch(url);
+
+   if(!r.ok)throw Error('Colisão HTTP '+r.status);
+
+   const bytes=pako.inflate(
+    new Uint8Array(await r.arrayBuffer())
+   );
+
+   if(bytes.length!==SIZE*SIZE){
+    throw Error('Arquivo de colisão incompatível');
+   }
+
    return bytes;
   })());
  }
+
  return collisionCache.get(k);
 }
+
 class MinHeap{
- constructor(){this.a=[]}
- push(n){let a=this.a,i=a.length;a.push(n);while(i>0){let p=(i-1)>>1;if(a[p][0]<=n[0])break;a[i]=a[p];i=p}a[i]=n}
- pop(){let a=this.a;if(!a.length)return null;let first=a[0],last=a.pop();if(a.length){let i=0;while(true){let c=i*2+1;if(c>=a.length)break;if(c+1<a.length&&a[c+1][0]<a[c][0])c++;if(a[c][0]>=last[0])break;a[i]=a[c];i=c}a[i]=last}return first}
- get size(){return this.a.length}
+ constructor(){
+  this.a=[];
+ }
+
+ push(n){
+  let a=this.a,i=a.length;
+  a.push(n);
+
+  while(i>0){
+   let p=(i-1)>>1;
+   if(a[p][0]<=n[0])break;
+   a[i]=a[p];
+   i=p;
+  }
+
+  a[i]=n;
+ }
+
+ pop(){
+  let a=this.a;
+  if(!a.length)return null;
+
+  let first=a[0];
+  let last=a.pop();
+
+  if(a.length){
+   let i=0;
+
+   while(true){
+    let c=i*2+1;
+    if(c>=a.length)break;
+    if(c+1<a.length&&a[c+1][0]<a[c][0])c++;
+    if(a[c][0]>=last[0])break;
+    a[i]=a[c];
+    i=c;
+   }
+
+   a[i]=last;
+  }
+
+  return first;
+ }
+
+ get size(){
+  return this.a.length;
+ }
 }
-const h=(a,b)=>Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y));
+
+const h=(a,b)=>
+ Math.max(
+  Math.abs(a.x-b.x),
+  Math.abs(a.y-b.y)
+ );
+
 function aStar(start,goal,at,box){
- let {minX,minY,maxX,maxY}=box,w=maxX-minX+1;
+ let {minX,minY,maxX,maxY}=box;
+ let w=maxX-minX+1;
+
  const key=(x,y)=>(y-minY)*w+x-minX;
+
  function near(p,radius){
   for(let d=0;d<=radius;d++){
-   for(let dy=-d;dy<=d;dy++)for(let dx=-d;dx<=d;dx++){
-    if(Math.max(Math.abs(dx),Math.abs(dy))!==d)continue;
-    const x=p.x+dx,y=p.y+dy;if(x<minX||x>maxX||y<minY||y>maxY)continue;
-    if(at(x,y)!==0)return {x,y};
+   for(let dy=-d;dy<=d;dy++){
+    for(let dx=-d;dx<=d;dx++){
+     if(Math.max(Math.abs(dx),Math.abs(dy))!==d){
+      continue;
+     }
+
+     const x=p.x+dx;
+     const y=p.y+dy;
+
+     if(
+      x<minX||x>maxX||
+      y<minY||y>maxY
+     )continue;
+
+     if(at(x,y)!==0){
+      return {x,y};
+     }
+    }
    }
-  }return null;
- }
- const s=near(start,5),g=near(goal,8);
- if(!s||!g)return null;
- const begin=key(s.x,s.y),target=key(g.x,g.y),open=new MinHeap(),score=new Map([[begin,0]]),parent=new Map();
- open.push([h(s,g),0,s.x,s.y]);let count=0;
- while(open.size&&count++<170000){
-  const [f,c,x,y]=open.pop(),i=key(x,y);
-  if(score.get(i)!==c)continue;
-  if(i===target){
-   const path=[];let k=i;while(k!==undefined){let yy=Math.floor(k/w)+minY,xx=(k%w)+minX;path.push([yy,xx]);k=parent.get(k)}
-   path.reverse();
-   let smooth=[path[0]],lastDir=null;
-   for(let j=1;j<path.length;j++){
-    const dir=[Math.sign(path[j][1]-path[j-1][1]),Math.sign(path[j][0]-path[j-1][0])].join(',');
-    if(dir!==lastDir&&j>1)smooth.push(path[j-1]);lastDir=dir;
-   }
-   if(path.length>1)smooth.push(path[path.length-1]);
-   return {path:smooth,steps:path.length-1,trimStart:h(s,start),trimEnd:h(g,goal)};
   }
+
+  return null;
+ }
+
+ const s=near(start,5);
+ const g=near(goal,8);
+
+ if(!s||!g)return null;
+
+ const begin=key(s.x,s.y);
+ const target=key(g.x,g.y);
+ const open=new MinHeap();
+ const score=new Map([[begin,0]]);
+ const parent=new Map();
+
+ open.push([h(s,g),0,s.x,s.y]);
+
+ let count=0;
+
+ while(open.size&&count++<170000){
+  const [f,c,x,y]=open.pop();
+  const i=key(x,y);
+
+  if(score.get(i)!==c)continue;
+
+  if(i===target){
+   const path=[];
+   let k=i;
+
+   while(k!==undefined){
+    let yy=Math.floor(k/w)+minY;
+    let xx=(k%w)+minX;
+
+    path.push([yy,xx]);
+    k=parent.get(k);
+   }
+
+   path.reverse();
+
+   let smooth=[path[0]];
+   let lastDir=null;
+
+   for(let j=1;j<path.length;j++){
+    const dir=[
+     Math.sign(path[j][1]-path[j-1][1]),
+     Math.sign(path[j][0]-path[j-1][0])
+    ].join(',');
+
+    if(dir!==lastDir&&j>1){
+     smooth.push(path[j-1]);
+    }
+
+    lastDir=dir;
+   }
+
+   if(path.length>1){
+    smooth.push(path[path.length-1]);
+   }
+
+   return {
+    path:smooth,
+    steps:path.length-1,
+    trimStart:h(s,start),
+    trimEnd:h(g,goal)
+   };
+  }
+
   const mask=at(x,y);
+
   for(const [dx,dy,bit] of DIRS){
    if(!(mask&bit))continue;
-   const nx=x+dx,ny=y+dy;if(nx<minX||nx>maxX||ny<minY||ny>maxY)continue;
-   const ni=key(nx,ny),nc=c+1;
+
+   const nx=x+dx;
+   const ny=y+dy;
+
+   if(
+    nx<minX||nx>maxX||
+    ny<minY||ny>maxY
+   )continue;
+
+   const ni=key(nx,ny);
+   const nc=c+1;
+
    if(nc>=(score.get(ni)??Infinity))continue;
-   score.set(ni,nc);parent.set(ni,i);open.push([nc+h({x:nx,y:ny},g),nc,nx,ny]);
+
+   score.set(ni,nc);
+   parent.set(ni,i);
+
+   open.push([
+    nc+h({x:nx,y:ny},g),
+    nc,
+    nx,
+    ny
+   ]);
   }
  }
+
  return null;
 }
+
 async function findWalkPath(start,goal,level){
  if(h(start,goal)>440)return null;
+
  const margin=110;
- const box={minX:Math.max(0,Math.min(start.x,goal.x)-margin),minY:Math.max(0,Math.min(start.y,goal.y)-margin),maxX:Math.max(start.x,goal.x)+margin,maxY:Math.max(start.y,goal.y)+margin};
- const chunks=new Map(),jobs=[];
- for(let fy=Math.floor(box.minY/SIZE);fy<=Math.floor(box.maxY/SIZE);fy++)for(let fx=Math.floor(box.minX/SIZE);fx<=Math.floor(box.maxX/SIZE);fx++){
-  jobs.push(collisionFile(fx,fy,level).then(bytes=>chunks.set(`${fx},${fy}`,bytes)));
+
+ const box={
+  minX:Math.max(0,Math.min(start.x,goal.x)-margin),
+  minY:Math.max(0,Math.min(start.y,goal.y)-margin),
+  maxX:Math.max(start.x,goal.x)+margin,
+  maxY:Math.max(start.y,goal.y)+margin
+ };
+
+ const chunks=new Map();
+ const jobs=[];
+
+ for(
+  let fy=Math.floor(box.minY/SIZE);
+  fy<=Math.floor(box.maxY/SIZE);
+  fy++
+ ){
+  for(
+   let fx=Math.floor(box.minX/SIZE);
+   fx<=Math.floor(box.maxX/SIZE);
+   fx++
+  ){
+   jobs.push(
+    collisionFile(fx,fy,level)
+     .then(bytes=>chunks.set(`${fx},${fy}`,bytes))
+   );
+  }
  }
+
  await Promise.all(jobs);
+
  const at=(x,y)=>{
-  if(x<box.minX||x>box.maxX||y<box.minY||y>box.maxY)return 0;
-  const fx=Math.floor(x/SIZE),fy=Math.floor(y/SIZE),c=chunks.get(`${fx},${fy}`);
+  if(
+   x<box.minX||x>box.maxX||
+   y<box.minY||y>box.maxY
+  )return 0;
+
+  const fx=Math.floor(x/SIZE);
+  const fy=Math.floor(y/SIZE);
+  const c=chunks.get(`${fx},${fy}`);
+
   return c?c[(y%SIZE)*SIZE+(x%SIZE)]:0;
  };
- // Libera o loop de interface antes de iniciar a busca.
+
  await new Promise(resolve=>setTimeout(resolve,0));
+
  return aStar(start,goal,at,box);
 }
+
+// ====================================================
+// CÁLCULO DAS ROTAS
+// ====================================================
+
 async function calculateRoutes(){
- const epoch=++pathEpoch,e=current();pathResults=[];
- if(!state.showPath){pathMessage='Rota visual desativada.';drawRoute();renderText();return}
- if(!spots.length){pathMessage='Aguardando a base de teleportes.';drawRoute();renderText();return}
- pathMessage='Calculando caminho de referência (pino ainda não conferido tile a tile)…';renderText();drawRoute();
- const valid=usable(e).map(r=>({route:r,t:teleportOf(r)})).filter(({route,t})=>t&&teleMap(t)===e.m&&t.level===0);
- if(e.id==='elder'||e.id==='world'){
-  pathMessage='Este destino exige conferência de coordenadas ou uma travessia: siga as instruções da Wiki.';
-  drawRoute();renderText();return;
+ const epoch=++pathEpoch;
+ const e=current();
+
+ pathResults=[];
+
+ if(!state.showPath){
+  pathMessage='Rota visual desativada.';
+  drawRoute();
+  renderText();
+  return;
  }
- if(!valid.length){pathMessage='A rota envolve outro mapa ou transporte especial; siga as instruções por etapas.';drawRoute();renderText();return}
- const all=await Promise.all(valid.map(async ({route,t})=>{
-  try{
-   const p=await findWalkPath({x:t.x,y:t.y},point(e),t.level);
-   return p?{...p,key:routeKey(route),engram:e.id}:null;
-  }catch(error){return {key:routeKey(route),engram:e.id,error:error.message}}
- }));
+
+ if(!spots.length){
+  pathMessage='Aguardando a base de teleportes.';
+  drawRoute();
+  renderText();
+  return;
+ }
+
+ pathMessage='Calculando caminho até o marcador da Wiki…';
+ renderText();
+ drawRoute();
+
+ const valid=usable(e)
+  .map(r=>({route:r,t:teleportOf(r)}))
+  .filter(({t})=>
+   t&&teleMap(t)===e.m&&t.level===0
+  );
+
+ if(e.id==='elder'){
+  pathMessage=
+   'Este destino exige uma travessia de barco. Siga as instruções da Wiki.';
+  drawRoute();
+  renderText();
+  return;
+ }
+
+ if(!valid.length){
+  pathMessage=
+   'A rota envolve outro mapa ou transporte especial. Siga as instruções por etapas.';
+  drawRoute();
+  renderText();
+  return;
+ }
+
+ const all=await Promise.all(
+  valid.map(async ({route,t})=>{
+   try{
+    const p=await findWalkPath(
+     {x:t.x,y:t.y},
+     point(e),
+     t.level
+    );
+
+    return p?{
+     ...p,
+     key:routeKey(route),
+     engram:e.id
+    }:null;
+   }catch(error){
+    return {
+     key:routeKey(route),
+     engram:e.id,
+     error:error.message
+    };
+   }
+  })
+ );
+
  if(epoch!==pathEpoch)return;
+
  pathResults=all.filter(x=>x?.path);
  const fails=all.filter(x=>x?.error);
+
  pathMessage=pathResults.length
-  ?'Rota caminhável até o pino aproximado; não é confirmação da posição real do engrama.'
-  :fails.length?'Dados de colisão indisponíveis ('+fails[0].error+'). Siga a Wiki.':'Não foi possível calcular caminho caminhável até esse pino.';
- drawRoute();renderText();drawTeleports();
+  ?'Caminho calculado até a região do marcador da Wiki. Portas e objetos ainda podem exigir interação.'
+  :fails.length
+   ?'Dados de colisão indisponíveis ('+fails[0].error+'). Siga a Wiki.'
+   :'Não foi possível calcular um caminho caminhável para esse destino.';
+
+ drawRoute();
+ renderText();
+ drawTeleports();
 }
+
 function drawRoute(){
- if(!map||!pathLayer)return;pathLayer.clearLayers();if(!state.showPath)return;
- const e=current(),key=routeKey(preferredRoute(e)),result=pathResults.find(p=>p.engram===e.id&&p.key===key);
+ if(!map||!pathLayer)return;
+
+ pathLayer.clearLayers();
+
+ if(!state.showPath)return;
+
+ const e=current();
+ const key=routeKey(preferredRoute(e));
+
+ const result=pathResults.find(p=>
+  p.engram===e.id&&p.key===key
+ );
+
  if(!result)return;
+
  const points=result.path;
- L.polyline(points,{color:'#102821',weight:8,opacity:.8,lineJoin:'round',interactive:false}).addTo(pathLayer);
- L.polyline(points,{color:'#65f5b6',weight:4,opacity:.95,lineJoin:'round',interactive:false}).addTo(pathLayer);
- L.circleMarker(points[0],{radius:5,color:'#edfdf4',weight:2,fillColor:'#2e84eb',fillOpacity:1,interactive:false}).addTo(pathLayer);
+
+ L.polyline(points,{
+  color:'#102821',
+  weight:8,
+  opacity:.8,
+  lineJoin:'round',
+  interactive:false
+ }).addTo(pathLayer);
+
+ L.polyline(points,{
+  color:'#65f5b6',
+  weight:4,
+  opacity:.95,
+  lineJoin:'round',
+  interactive:false
+ }).addTo(pathLayer);
+
+ L.circleMarker(points[0],{
+  radius:5,
+  color:'#edfdf4',
+  weight:2,
+  fillColor:'#2e84eb',
+  fillOpacity:1,
+  interactive:false
+ }).addTo(pathLayer);
 }
+
+// ====================================================
+// INTERFACE
+// ====================================================
+
 function renderText(){
- const e=current(),r=preferredRoute(e),t=teleportOf(r),done=state.done[state.prestige]||{};
+ const e=current();
+ const r=preferredRoute(e);
+ const t=teleportOf(r);
+ const done=state.done[state.prestige]||{};
+
  $('title').textContent=e.n+' — '+e.area;
- $('counter').textContent=`Engrama ${state.index+1}/12 · Prestígio ${state.prestige}`;
- $('teleTitle').textContent=!usable(e).length?'Nenhum teleporte habilitado':t?`Teleporte: ${t.groupName} → ${t.name}${t.code?' ['+t.code+']':''}`:'Teleporte: '+r[0];
+
+ $('counter').textContent=
+  `Engrama ${state.index+1}/12 · Prestígio ${state.prestige}`;
+
+ $('teleTitle').textContent=!usable(e).length
+  ?'Nenhum teleporte habilitado'
+  :t
+   ?`Teleporte: ${t.groupName} → ${t.name}${t.code?' ['+t.code+']':''}`
+   :'Teleporte: '+r[0];
+
  $('instructions').textContent='1. '+r[2];
- $('where').textContent='2. Local do engrama: '+e.where;
- const result=pathResults.find(p=>p.engram===e.id&&p.key===routeKey(r));
+
+ $('where').textContent=
+  '2. Local do engrama: '+e.where;
+
+ const result=pathResults.find(p=>
+  p.engram===e.id&&p.key===routeKey(r)
+ );
+
  $('routeStatus').textContent=result
-  ?`↳ ${result.steps} passos até o pino de referência (posição ainda não verificada)${state.autoRoute&&!state.selected[e.id]?' · menor caminhada até o ponto de referência entre rotas calculadas':''}. ${result.trimEnd?'O destino foi aproximado à casa caminhável mais próxima.':''}`
+  ?`↳ ${result.steps} passos de caminhada até o destino da Wiki${state.autoRoute&&!state.selected[e.id]?' · menor caminhada entre as rotas cadastradas e calculadas':''}. ${result.trimEnd?'O cálculo terminou na casa caminhável mais próxima.':''}`
   :pathMessage;
- $('warning').textContent=(e.req?'⚠ '+e.req+' · ':'')+(point(e).verified?'Pino sincronizado com mapa da Wiki.':'Pino fixo de referência: coordenada numérica ainda não validada pela Wiki.');
+
+ $('warning').textContent=
+  (e.req?'⚠ '+e.req+' · ':'')+
+  `Pino fixo da Wiki: X ${point(e).x}, Y ${point(e).y}.`;
+
  $('choices').replaceChildren();
+
  for(let option of usable(e)){
-  const btn=document.createElement('button'),tp=teleportOf(option);
-  btn.textContent=tp?(tp.groupName+' '+(tp.code||tp.name)):option[0];
-  if(routeKey(option)===routeKey(r))btn.className='active';
-  btn.onclick=()=>{state.selected[e.id]=routeKey(option);persist();renderText();drawRoute();drawTeleports()};$('choices').append(btn);
+  const btn=document.createElement('button');
+  const tp=teleportOf(option);
+
+  btn.textContent=tp
+   ?tp.groupName+' '+(tp.code||tp.name)
+   :option[0];
+
+  if(routeKey(option)===routeKey(r)){
+   btn.className='active';
+  }
+
+  btn.onclick=()=>{
+   state.selected[e.id]=routeKey(option);
+   persist();
+   renderText();
+   drawRoute();
+   drawTeleports();
+  };
+
+  $('choices').append(btn);
  }
- $('done').textContent=done[e.id]?'↶ Desmarcar':'✓ Coletado e próximo';
- $('progress').textContent=`${E.filter(x=>done[x.id]).length}/12 coletados · Progresso salvo`;
- $('routeBox').style.display=state.compact?'none':'block';
- $('collapse').textContent=state.compact?'▸ Roteiro':'▾ Roteiro';
- $('showTeleports').textContent=state.showTP?'Teleportes ✓':'Teleportes ✕';
- $('showPath').textContent=state.showPath?'Rota ✓':'Rota ✕';
- $('wiki').onclick=()=>window.open('https://runescape.wiki/w/'+encodeURIComponent(e.n.replaceAll(' ','_')+'_engram'),'_blank');
+
+ $('done').textContent=done[e.id]
+  ?'↶ Desmarcar'
+  :'✓ Coletado e próximo';
+
+ $('progress').textContent=
+  `${E.filter(x=>done[x.id]).length}/12 coletados · Progresso salvo`;
+
+ $('routeBox').style.display=
+  state.compact?'none':'block';
+
+ $('collapse').textContent=
+  state.compact?'▸ Roteiro':'▾ Roteiro';
+
+ $('showTeleports').textContent=
+  state.showTP?'Teleportes ✓':'Teleportes ✕';
+
+ $('showPath').textContent=
+  state.showPath?'Rota ✓':'Rota ✕';
+
+ $('wiki').onclick=()=>window.open(
+  'https://runescape.wiki/w/'+
+  encodeURIComponent(e.n.replaceAll(' ','_')+'_engram'),
+  '_blank'
+ );
 }
-function render(){++pathEpoch;pathResults=[];pathMessage='';renderText();drawMap();persist();calculateRoutes()}
-function advance(n){state.index=(state.index+n+E.length)%E.length;render()}
-$('prev').onclick=()=>advance(-1);$('next').onclick=()=>advance(1);
-$('done').onclick=()=>{const d=state.done[state.prestige]|| (state.done[state.prestige]={}),e=current();if(d[e.id]){delete d[e.id];renderText();persist()}else{d[e.id]=true;advance(1)}};
-$('center').onclick=()=>{if(map){const p=point(current());map.setView([p.y,p.x],current().m===28?2:3)}};
-$('showTeleports').onclick=()=>{state.showTP=!state.showTP;persist();renderText();drawTeleports()};
-$('showPath').onclick=()=>{state.showPath=!state.showPath;persist();if(state.showPath)calculateRoutes();else{++pathEpoch;pathResults=[];pathMessage='Rota visual desativada.';renderText();drawRoute()}};
-$('collapse').onclick=()=>{state.compact=!state.compact;persist();renderText();setTimeout(()=>map?.invalidateSize(),50)};
-function openModal(title){$('modalTitle').textContent=title;$('modalBody').replaceChildren();$('overlay').classList.add('show');$('save').style.display='block'}
-function closeModal(){$('overlay').classList.remove('show')}
+
+function render(){
+ ++pathEpoch;
+ pathResults=[];
+ pathMessage='';
+
+ renderText();
+ drawMap();
+ persist();
+ calculateRoutes();
+}
+
+function advance(n){
+ state.index=(state.index+n+E.length)%E.length;
+ render();
+}
+
+$('prev').onclick=()=>advance(-1);
+$('next').onclick=()=>advance(1);
+
+$('done').onclick=()=>{
+ const d=state.done[state.prestige]||
+  (state.done[state.prestige]={});
+
+ const e=current();
+
+ if(d[e.id]){
+  delete d[e.id];
+  renderText();
+  persist();
+ }else{
+  d[e.id]=true;
+  advance(1);
+ }
+};
+
+$('center').onclick=()=>{
+ if(map){
+  const p=point(current());
+
+  map.setView(
+   [p.y,p.x],
+   current().m===28?2:3
+  );
+ }
+};
+
+$('showTeleports').onclick=()=>{
+ state.showTP=!state.showTP;
+ persist();
+ renderText();
+ drawTeleports();
+};
+
+$('showPath').onclick=()=>{
+ state.showPath=!state.showPath;
+ persist();
+
+ if(state.showPath){
+  calculateRoutes();
+ }else{
+  ++pathEpoch;
+  pathResults=[];
+  pathMessage='Rota visual desativada.';
+  renderText();
+  drawRoute();
+ }
+};
+
+$('collapse').onclick=()=>{
+ state.compact=!state.compact;
+ persist();
+ renderText();
+ setTimeout(()=>map?.invalidateSize(),50);
+};
+
+// ====================================================
+// LISTA DE COLETA
+// ====================================================
+
+function openModal(title){
+ $('modalTitle').textContent=title;
+ $('modalBody').replaceChildren();
+ $('overlay').classList.add('show');
+ $('save').style.display='block';
+}
+
+function closeModal(){
+ $('overlay').classList.remove('show');
+}
+
 $('cancel').onclick=closeModal;
-function addCheckbox(parent,label,checked){let l=document.createElement('label');l.className='check';let c=document.createElement('input');c.type='checkbox';c.checked=checked;l.append(c,document.createTextNode(label));parent.append(l);return c}
+
+function addCheckbox(parent,label,checked){
+ let l=document.createElement('label');
+ l.className='check';
+
+ let c=document.createElement('input');
+ c.type='checkbox';
+ c.checked=checked;
+
+ l.append(c,document.createTextNode(label));
+ parent.append(l);
+
+ return c;
+}
+
 $('list').onclick=()=>{
  openModal('Engramas · marcar coleta');
  $('save').style.display='none';
- const progress=state.done[state.prestige]||(state.done[state.prestige]={});
+
+ const progress=state.done[state.prestige]||
+  (state.done[state.prestige]={});
+
  const caption=document.createElement('p');
  caption.className='dim';
- caption.textContent='Clique na bolinha para marcar ou desmarcar. Clique no nome para abrir o engrama no mapa.';
+
+ caption.textContent=
+  'Clique na bolinha para marcar ou desmarcar. Clique no nome para abrir o engrama no mapa.';
+
  $('modalBody').append(caption);
+
  const reset=document.createElement('button');
  reset.textContent='↺ Reiniciar coleta deste prestígio';
- reset.style='width:100%;margin:0 0 12px 0;background:#643832';
+
+ reset.style=
+  'width:100%;margin:0 0 12px 0;background:#643832';
+
  reset.onclick=()=>{
-  if(!confirm('Desmarcar todos os 12 engramas do prestígio '+state.prestige+'? Seus teleportes serão mantidos.'))return;
+  if(!confirm(
+   'Desmarcar todos os 12 engramas do prestígio '+
+   state.prestige+
+   '? Seus teleportes serão mantidos.'
+  ))return;
+
   state.done[state.prestige]={};
+
   persist();
   closeModal();
   render();
   $('list').click();
  };
+
  $('modalBody').append(reset);
+
  E.forEach((e,i)=>{
   const row=document.createElement('div');
-  row.style='display:flex;align-items:center;gap:6px;margin:3px 0';
+
+  row.style=
+   'display:flex;align-items:center;gap:6px;margin:3px 0';
+
   const circle=document.createElement('button');
-  circle.style='width:38px;min-width:38px;padding:7px 0;font-size:17px';
+
+  circle.style=
+   'width:38px;min-width:38px;padding:7px 0;font-size:17px';
+
   const label=document.createElement('button');
   label.style='flex:1;text-align:left';
+
   const update=()=>{
    circle.textContent=progress[e.id]?'●':'○';
-   circle.title=progress[e.id]?'Marcar como não coletado':'Marcar como coletado';
-   circle.style.color=progress[e.id]?'#75efb5':'#d4e2db';
-   label.textContent=(i+1)+'. '+e.n+' — '+e.area+(progress[e.id]?' ✓':'');
+
+   circle.title=progress[e.id]
+    ?'Marcar como não coletado'
+    :'Marcar como coletado';
+
+   circle.style.color=progress[e.id]
+    ?'#75efb5'
+    :'#d4e2db';
+
+   label.textContent=
+    (i+1)+'. '+e.n+' — '+e.area+
+    (progress[e.id]?' ✓':'');
   };
+
   circle.onclick=()=>{
-   if(progress[e.id])delete progress[e.id];
-   else progress[e.id]=true;
+   if(progress[e.id]){
+    delete progress[e.id];
+   }else{
+    progress[e.id]=true;
+   }
+
    persist();
    renderText();
    update();
   };
+
   label.onclick=()=>{
    state.index=i;
    closeModal();
    render();
   };
+
   update();
   row.append(circle,label);
   $('modalBody').append(row);
  });
 };
 
+// ====================================================
+// CONFIGURAÇÕES
+// ====================================================
+
 $('settings').onclick=()=>{
- openModal('⚙ Configurações');let draft={...state.enabled};
- let row=document.createElement('label');row.textContent='Prestígio atual: ';let num=document.createElement('input');num.type='number';num.min=1;num.max=999;num.value=state.prestige;row.append(num);$('modalBody').append(row);
- const auto=addCheckbox($('modalBody'),'Escolher automaticamente a menor caminhada calculada',state.autoRoute);
- const all=addCheckbox($('modalBody'),'Mostrar todos os teleportes habilitados no mapa',state.showAll);
- const path=addCheckbox($('modalBody'),'Mostrar caminho caminhável no mapa',state.showPath);
- const search=document.createElement('input');search.type='search';search.placeholder='Buscar teleporte…';$('modalBody').append(search);
- const field=document.createElement('fieldset');field.append(document.createElement('legend'));field.firstChild.textContent='Meus teleportes';$('modalBody').append(field);
+ openModal('⚙ Configurações');
+
+ let draft={...state.enabled};
+
+ let row=document.createElement('label');
+ row.textContent='Prestígio atual: ';
+
+ let num=document.createElement('input');
+ num.type='number';
+ num.min=1;
+ num.max=999;
+ num.value=state.prestige;
+
+ row.append(num);
+ $('modalBody').append(row);
+
+ const auto=addCheckbox(
+  $('modalBody'),
+  'Escolher automaticamente a menor caminhada calculada',
+  state.autoRoute
+ );
+
+ const all=addCheckbox(
+  $('modalBody'),
+  'Mostrar todos os teleportes habilitados no mapa',
+  state.showAll
+ );
+
+ const path=addCheckbox(
+  $('modalBody'),
+  'Mostrar caminho caminhável no mapa',
+  state.showPath
+ );
+
+ const search=document.createElement('input');
+ search.type='search';
+ search.placeholder='Buscar teleporte…';
+ $('modalBody').append(search);
+
+ const field=document.createElement('fieldset');
+ field.append(document.createElement('legend'));
+ field.firstChild.textContent='Meus teleportes';
+
+ $('modalBody').append(field);
+
  const list=[];
- for(let g of groups){const c=addCheckbox(field,g.name,!!draft[g.id]);c.onchange=()=>draft[g.id]=c.checked;list.push({g,row:c.parentElement})}
- if(!groups.length)field.append('A lista de transportes ainda não carregou.');
- search.oninput=()=>list.forEach(({g,row})=>row.style.display=g.name.toLowerCase().includes(search.value.toLowerCase())?'flex':'none');
- const reset=document.createElement('button');reset.textContent='↺ Restaurar posições originais';reset.style='width:100%;margin-top:8px';
- reset.onclick=()=>{ // Apaga apenas dados antigos de ajuste. Nunca altera o progresso.
-  for(let key of ['gps-engramas-v2','gps-engramas-v4','gps-engramas-v5']){
-   const s=read(key);if(s.pins){delete s.pins;try{localStorage.setItem(key,JSON.stringify(s))}catch(_){}}
+
+ for(let g of groups){
+  const c=addCheckbox(
+   field,
+   g.name,
+   !!draft[g.id]
+  );
+
+  c.onchange=()=>{
+   draft[g.id]=c.checked;
+  };
+
+  list.push({
+   g,
+   row:c.parentElement
+  });
+ }
+
+ if(!groups.length){
+  field.append(
+   'A lista de transportes ainda não carregou.'
+  );
+ }
+
+ search.oninput=()=>{
+  list.forEach(({g,row})=>{
+   row.style.display=
+    g.name.toLowerCase().includes(
+     search.value.toLowerCase()
+    )
+     ?'flex'
+     :'none';
+  });
+ };
+
+ const reset=document.createElement('button');
+ reset.textContent='↺ Recentrar nos pinos da Wiki';
+ reset.style='width:100%;margin-top:8px';
+
+ reset.onclick=()=>{
+  for(let key of [
+   'gps-engramas-v2',
+   'gps-engramas-v4',
+   'gps-engramas-v5'
+  ]){
+   const s=read(key);
+
+   if(s.pins){
+    delete s.pins;
+
+    try{
+     localStorage.setItem(
+      key,
+      JSON.stringify(s)
+     );
+    }catch(_){}
+   }
   }
-  closeModal();render();
- };$('modalBody').append(reset);
- let note=document.createElement('p');note.className='dim';note.textContent='As rotas usam dados de colisão externos do Clue Trainer. O percurso mais curto considera apenas caminhada no mapa: não calcula automaticamente portas, barcos, tempo de animação, Surge nem Dive. Os pontos dos engramas ainda precisam ser auditados.';$('modalBody').append(note);
+
+  closeModal();
+  render();
+ };
+
+ $('modalBody').append(reset);
+
+ let note=document.createElement('p');
+ note.className='dim';
+
+ note.textContent=
+  'As rotas usam dados de colisão externos do Clue Trainer. '+
+  'O percurso mais curto considera apenas caminhada no mapa: '+
+  'não calcula automaticamente portas, barcos, tempo de animação, '+
+  'Surge nem Dive. Os 12 pinos usam os marcadores da Wiki; '+
+  'o algoritmo pode precisar parar na casa caminhável mais próxima.';
+
+ $('modalBody').append(note);
+
  $('save').onclick=()=>{
-  state.prestige=Math.max(1,Math.min(999,Number(num.value)||1));state.enabled=draft;state.showAll=all.checked;state.autoRoute=auto.checked;state.showPath=path.checked;
-  if(state.autoRoute)state.selected[current().id]=undefined;
-  closeModal();render();
+  state.prestige=Math.max(
+   1,
+   Math.min(999,Number(num.value)||1)
+  );
+
+  state.enabled=draft;
+  state.showAll=all.checked;
+  state.autoRoute=auto.checked;
+  state.showPath=path.checked;
+
+  if(state.autoRoute){
+   state.selected[current().id]=undefined;
+  }
+
+  closeModal();
+  render();
  };
 };
-render();loadTeleports();syncWikiPositions();
+
+render();
+loadTeleports();
 </script>
 </body>
 </html>
