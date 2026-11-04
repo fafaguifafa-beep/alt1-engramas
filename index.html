@@ -4,53 +4,130 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GPS Engramas v5.3 — Alt1</title>
+<title>GPS Engramas v5.4 — Alt1</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 :root{font:13px system-ui,Segoe UI,Arial,sans-serif;color:#e9f6ef;background:#101c1a}
-*{box-sizing:border-box}html,body{height:100%;margin:0}button,input{font:inherit}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+button,input{font:inherit}
 button{background:#25413a;color:#e9f6ef;border:1px solid #44675b;border-radius:6px;padding:7px;cursor:pointer}
-button:hover{background:#346050}.primary{background:#3db689;color:#08251b;border:0;font-weight:700}
+button:hover{background:#346050}
+.primary{background:#3db689;color:#08251b;border:0;font-weight:700}
 #app{height:100%;min-height:360px;display:flex;flex-direction:column}
 header,#top,footer{display:flex;justify-content:space-between;align-items:center;gap:5px;padding:7px 9px;background:#1a302b}
-header{border-bottom:1px solid #3b5c50}header strong{color:#71edb7;font-size:14px}header aside{display:flex;gap:5px}
-#top{background:#20342f}#title{font-size:14px;font-weight:700}small,.dim{color:#a5c2b4;font-size:11px}
+header{border-bottom:1px solid #3b5c50}
+header strong{color:#71edb7;font-size:14px}
+header aside{display:flex;gap:5px}
+#top{background:#20342f}
+#title{font-size:14px;font-weight:700}
+small,.dim{color:#a5c2b4;font-size:11px}
 #map{flex:1;min-height:205px;position:relative;background:#101e1c}
 #msg{position:absolute;top:9px;right:8px;z-index:620;max-width:62%;background:#112822dd;padding:5px 7px;border-radius:5px;font-size:10px;pointer-events:none}
-#maptools{position:absolute;z-index:620;right:8px;bottom:8px;display:flex;gap:5px}#maptools button{background:#153831dd;padding:6px}
+#maptools{position:absolute;z-index:620;right:8px;bottom:8px;display:flex;gap:5px}
+#maptools button{background:#153831dd;padding:6px}
 #routeBox{background:#192d27;border-top:1px solid #476f5c;padding:8px 10px;max-height:42vh;overflow-y:auto}
-#routeBox b{color:#7defbd}#routeBox p{margin:4px 0;line-height:1.45}
-#routeStatus{font-size:11px;color:#9bdacc}#warning{color:#e8c78b;font-size:11px}
-#choices{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}#choices button{font-size:11px;padding:4px 7px}#choices button.active{border-color:#7defbd;color:#91ffd0}
+#routeBox b{color:#7defbd}
+#routeBox p{margin:4px 0;line-height:1.45}
+#routeStatus{font-size:11px;color:#9bdacc}
+#warning{color:#e8c78b;font-size:11px}
+#choices{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+#choices button{font-size:11px;padding:4px 7px}
+#choices button.active{border-color:#7defbd;color:#91ffd0}
 #progress{padding:5px;text-align:center;color:#aacbbd;font-size:11px;background:#11261d}
-footer{padding:7px}footer button{flex:1}
-#overlay{position:fixed;inset:0;background:#000b;z-index:2000;display:none;align-items:center;justify-content:center;padding:10px}#overlay.show{display:flex}
+footer{padding:7px}
+footer button{flex:1}
+#overlay{position:fixed;inset:0;background:#000b;z-index:2000;display:none;align-items:center;justify-content:center;padding:10px}
+#overlay.show{display:flex}
 #dialog{background:#18302a;border:1px solid #56806c;border-radius:8px;width:min(100%,520px);max-height:93vh;display:flex;flex-direction:column;overflow:hidden}
-#dialog h3{margin:0;padding:11px;border-bottom:1px solid #426255}#modalBody{overflow:auto;padding:10px 12px}#modalFooter{display:flex;gap:7px;padding:9px;border-top:1px solid #426255}#modalFooter button{flex:1}
-.check{display:flex;align-items:center;gap:8px;padding:6px 0}.check input{accent-color:#3cc98a}
-fieldset{border:1px solid #436454;border-radius:7px;padding:9px;margin:10px 0}legend{color:#79e9b6;font-weight:700}
-input[type=search],input[type=number]{background:#25443a;border:1px solid #547c6b;color:#fff;border-radius:4px;padding:7px}input[type=search]{width:100%}
+#dialog h3{margin:0;padding:11px;border-bottom:1px solid #426255}
+#modalBody{overflow:auto;padding:10px 12px}
+#modalFooter{display:flex;gap:7px;padding:9px;border-top:1px solid #426255}
+#modalFooter button{flex:1}
+.check{display:flex;align-items:center;gap:8px;padding:6px 0}
+.check input{accent-color:#3cc98a}
+fieldset{border:1px solid #436454;border-radius:7px;padding:9px;margin:10px 0}
+legend{color:#79e9b6;font-weight:700}
+input[type=search],input[type=number]{background:#25443a;border:1px solid #547c6b;color:#fff;border-radius:4px;padding:7px}
+input[type=search]{width:100%}
 .dest{width:21px;height:21px;background:#03c38c;border:3px solid white;border-radius:50%;box-shadow:0 0 0 3px #066b50,0 1px 8px #000b}
 .tp{position:relative;width:30px;height:30px;border:1px solid #bce4d3;border-radius:5px;background:#17332ddc;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px #000b}
-.tp img{width:25px;height:25px;object-fit:contain}.tp .key{position:absolute;right:-7px;bottom:-8px;font-size:10px;font-weight:700;line-height:1.1;background:#194b82;color:white;border:1px solid #cde7de;border-radius:4px;padding:2px 3px;white-space:nowrap}
-.tp.best{outline:3px solid #eabc4b}.tp .fallback{font-size:18px;color:#9af7c9}.leaflet-control-attribution{font-size:8px!important}
-@media(max-height:570px){#routeBox{max-height:29vh;padding:5px 8px}header,#top{padding:5px 7px}}
+.tp img{width:25px;height:25px;object-fit:contain}
+.tp .key{position:absolute;right:-7px;bottom:-8px;font-size:10px;font-weight:700;line-height:1.1;background:#194b82;color:white;border:1px solid #cde7de;border-radius:4px;padding:2px 3px;white-space:nowrap}
+.tp.best{outline:3px solid #eabc4b}
+.tp .fallback{font-size:18px;color:#9af7c9}
+.leaflet-control-attribution{font-size:8px!important}
+@media(max-height:570px){
+ #routeBox{max-height:29vh;padding:5px 8px}
+ header,#top{padding:5px 7px}
+}
 </style>
 </head>
 <body>
+
 <div id="app">
- <header><strong>◈ GPS Engramas</strong><aside><button id="wiki">Wiki ↗</button><button id="list">☷ Lista</button><button id="settings">⚙ Config.</button></aside></header>
- <div id="top"><div><div id="title">Carregando…</div><small id="counter"></small></div><button id="collapse">▾ Roteiro</button></div>
- <div id="map"><div id="msg">Carregando mapa…</div><div id="maptools"><button id="showTeleports">Teleportes ✓</button><button id="showPath">Rota ✓</button><button id="center">⌖ Destino</button></div></div>
- <div id="routeBox"><b id="teleTitle">Teleporte recomendado</b><p id="instructions"></p><p id="where"></p><p id="routeStatus"></p><p id="warning"></p><div id="choices"></div></div>
+ <header>
+  <strong>◈ GPS Engramas</strong>
+  <aside>
+   <button id="wiki">Wiki ↗</button>
+   <button id="list">☷ Lista</button>
+   <button id="settings">⚙ Config.</button>
+  </aside>
+ </header>
+
+ <div id="top">
+  <div>
+   <div id="title">Carregando…</div>
+   <small id="counter"></small>
+  </div>
+  <button id="collapse">▾ Roteiro</button>
+ </div>
+
+ <div id="map">
+  <div id="msg">Carregando mapa…</div>
+  <div id="maptools">
+   <button id="showTeleports">Teleportes ✓</button>
+   <button id="showPath">Rota ✓</button>
+   <button id="recalc">⟳ Recalcular</button>
+   <button id="center">⌖ Destino</button>
+  </div>
+ </div>
+
+ <div id="routeBox">
+  <b id="teleTitle">Teleporte recomendado</b>
+  <p id="instructions"></p>
+  <p id="where"></p>
+  <p id="routeStatus"></p>
+  <p id="warning"></p>
+  <div id="choices"></div>
+ </div>
+
  <div id="progress"></div>
- <footer><button id="prev">← Anterior</button><button id="done" class="primary">✓ Coletado e próximo</button><button id="next">Próximo →</button></footer>
+
+ <footer>
+  <button id="prev">← Anterior</button>
+  <button id="done" class="primary">✓ Coletado e próximo</button>
+  <button id="next">Próximo →</button>
+ </footer>
 </div>
-<div id="overlay"><section id="dialog"><h3 id="modalTitle"></h3><div id="modalBody"></div><div id="modalFooter"><button id="cancel">Cancelar</button><button id="save" class="primary">Salvar</button></div></section></div>
+
+<div id="overlay">
+ <section id="dialog">
+  <h3 id="modalTitle"></h3>
+  <div id="modalBody"></div>
+  <div id="modalFooter">
+   <button id="cancel">Cancelar</button>
+   <button id="save" class="primary">Salvar</button>
+  </div>
+ </section>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+
 <script>
 'use strict';
+
 const $=id=>document.getElementById(id);
 const WIKI='https://runescape.wiki/w/Engram/Guide';
 const COMMIT='6795e265e5f04765f51b88c14e69bf6426de8f8b';
@@ -61,7 +138,8 @@ const COLLISION=RAW+'/static/map/collision/';
 const TILES='https://raw.githubusercontent.com/mejrs/layers_rs3/refs/heads/master/map_squares';
 const STORE='gps-engramas-v5';
 
-// Coordenadas fixas dos 12 marcadores da Wiki.
+// Coordenadas dos marcadores da RuneScape Wiki.
+// Somente World Gate foi alterado em relação à v5.3.
 const E=[
  {id:'druid',n:'Druid',area:'Taverley',m:28,x:2924,y:3481,where:'No chão, a sudeste do Altar de Guthix no círculo dos druidas.',routes:[['home','taverley','Da magnetita de Taverley, vá a nordeste até o altar.'],['home','burthorpe','Da magnetita de Burthorpe, siga para sul até Taverley.']]},
  {id:'balance',n:'Balance Elemental',area:'Falador',m:28,x:3038,y:3399,where:'Na pedra central do círculo de pedras, diretamente a leste da magnetita de Falador.',routes:[['home','falador','Siga para leste da magnetita de Falador.'],['skullsceptre','outside','Do teleporte do Skull sceptre, vá para sudoeste.']]},
@@ -71,9 +149,9 @@ const E=[
  {id:'guardians',n:'Guardians of Guthix',area:'Tears of Guthix',m:634,x:3243,y:9499,where:'No chão, ao sul de Juna, perto das estalagmites.',routes:[['gamesnecklace','tearsofguthix','No Games necklace, escolha 7 (Tears of Guthix). Vá para sul de Juna.']]},
  {id:'jas',n:'Stone of Jas',area:'Fist of Guthix',m:105,x:1699,y:5606,where:'Na prateleira da parede norte da área de recompensas.',routes:[['ringofduelling','fistofguthix','No Ring of duelling, escolha 4 (Fist of Guthix) e entre pelo portal sudoeste.'],['home','falador','De Falador, vá a leste até Gamers’ Grotto; entre pelo portal sudoeste.']]},
  {id:'edicts',n:'Sword of Edicts',area:'Wilderness Crater',m:28,x:3143,y:3712,where:'No chão, a leste da espada gigante no centro da cratera.',req:'Cuidado com inimigos na Wilderness.',routes:[['home','wilderness','Da magnetita Wilderness, corra para norte até a cratera.']]},
- {id:'world',n:'World Gate',area:'World Gate',m:28,x:2375,y:3361,where:'Entre duas rochas ao norte do World Gate, a noroeste de três pequenos lagos.',routes:[['sixthage','worldgate','No Sixth-Age circuit, use a opção 2 (World Gate) e siga para norte.'],['travellersnecklace','outpost','No Traveller’s necklace, use a opção 2 (Outpost) e siga para oeste.'],['home','eaglespeak','Da magnetita Eagles’ Peak, vá para sul até World Gate.']]},
+ {id:'world',n:'World Gate',area:'World Gate',m:28,x:2403,y:3532,where:'Entre duas rochas ao norte do World Gate, a noroeste de três pequenos lagos.',routes:[['sixthage','worldgate','No Sixth-Age circuit, use a opção 2 (World Gate) e siga para norte.'],['travellersnecklace','outpost','No Traveller’s necklace, use a opção 2 (Outpost) e siga para oeste.'],['home','eaglespeak','Da magnetita Eagles’ Peak, vá para sul até World Gate.']]},
  {id:'gnome',n:'Gnome',area:'Gnome Maze',m:28,x:2529,y:3148,where:'No beco sem saída no centro-sul do labirinto.',req:'Labirinto com passagens; caminho dentro dele depende da entrada.',routes:[['normalspellbook','watchtower-yanille','Vá ao norte até a entrada sudeste do Gnome Maze.'],['home','yanille','Da magnetita de Yanille, vá ao norte até a entrada noroeste do labirinto.']]},
- {id:'time',n:'Time',area:'Glarial’s Tombstone',m:28,x:2556,y:3441,where:'Debaixo de um arbusto ao sul e oeste da lápide de Glarial.',routes:[['luckofthedwarves','outpost','Com Dark Facet of Luck, escolha 4 (Dwarven Outpost); vá para sudoeste.'],['skillsnecklace','fishing','No Skills necklace, escolha 1 (Fishing Guild), depois vá a noroeste.'],['home','ardougne','Da magnetita de Ardougne, siga para noroeste além da Fishing Guild.']]},
+ {id:'time',n:'Time',area:'Glarial’s Tombstone',m:28,x:2556,y:3441,where:'Debaixo de um arbusto ao sul e oeste da lápide de Glarial.',routes:[['luckofthedwarves','outpost','Com Dark Facet of Luck, escolha 4 (Dwarven Outpost); vá para sudoeste.'],['skillsnecklace','fishing','No Skills necklace, escolha 1 (Fishing Guild), depois vá a noroeste.'],['home','ardougne','Da magnetita de Ardougne, siga a noroeste além da Fishing Guild.']]},
  {id:'naragi',n:'Naragi',area:'Naragun',m:649,x:1994,y:6007,where:'Da saída AIS, siga para norte e depois oeste, até a casa de Guthix.',req:'No tutorial é entregue por Orla; no prestígio, exige acesso por The World Wakes.',routes:[['fairyring','AIS','Use anel de fada AIS; vá para norte e depois oeste até o fim do caminho.']]}
 ];
 
@@ -107,13 +185,16 @@ let state={
 state.index=Math.max(0,Math.min(11,state.index));
 
 function persist(){
- try{localStorage.setItem(STORE,JSON.stringify(state))}
- catch(e){console.warn(e)}
+ try{
+  localStorage.setItem(STORE,JSON.stringify(state));
+ }catch(e){
+  console.warn(e);
+ }
 }
 
 const current=()=>E[state.index];
 
-// Pinos fixos da Wiki: ajustes manuais antigos são ignorados.
+// Os pinos são fixos. Ajustes antigos não são usados.
 const point=e=>({
  x:e.x,
  y:e.y,
@@ -133,9 +214,9 @@ let pathEpoch=0;
 let pathResults=[];
 let pathMessage='';
 
-// ====================================================
+// ==========================================
 // BASE DE TELEPORTES
-// ====================================================
+// ==========================================
 
 function closeAt(s,start,op,cl){
  let dep=0,q='',com='';
@@ -149,18 +230,34 @@ function closeAt(s,start,op,cl){
   }
 
   if(com==='block'){
-   if(c==='*'&&n==='/'){i++;com=''}
+   if(c==='*'&&n==='/'){
+    i++;
+    com='';
+   }
    continue;
   }
 
   if(q){
-   if(c==='\\'){i++;continue}
+   if(c==='\\'){
+    i++;
+    continue;
+   }
+
    if(c===q)q='';
    continue;
   }
 
-  if(c==='/'&&n==='/'){i++;com='line';continue}
-  if(c==='/'&&n==='*'){i++;com='block';continue}
+  if(c==='/'&&n==='/'){
+   i++;
+   com='line';
+   continue;
+  }
+
+  if(c==='/'&&n==='*'){
+   i++;
+   com='block';
+   continue;
+  }
 
   if(c==='"'||c==="'"||c==='`'){
    q=c;
@@ -168,6 +265,7 @@ function closeAt(s,start,op,cl){
   }
 
   if(c===op)dep++;
+
   if(c===cl&&--dep===0)return i;
  }
 
@@ -230,13 +328,16 @@ function parseTeleports(s){
  let gs=[],ss=[];
 
  for(let group of objList(s.slice(a+1,b))){
-  if(!/\btype\s*:\s*['"]teleports['"]/.test(group))continue;
+  if(!/\btype\s*:\s*['"]teleports['"]/.test(group)){
+   continue;
+  }
 
   let match=/\bspots\s*:\s*\[/.exec(group);
   if(!match)continue;
 
   let p=group.indexOf('[',match.index);
   let e=closeAt(group,p,'[',']');
+
   if(e<0)continue;
 
   let head=group.slice(0,match.index);
@@ -266,7 +367,9 @@ function parseTeleports(s){
   }
  }
 
- if(ss.length<400)throw Error('Destinos insuficientes');
+ if(ss.length<400){
+  throw Error('Destinos insuficientes');
+ }
 
  return {groups:gs,spots:ss};
 }
@@ -291,10 +394,11 @@ async function loadTeleports(){
 
   groups=data.groups;
   spots=data.spots;
-
   $('msg').textContent=spots.length+' destinos de teleporte';
+
  }catch(err){
-  $('msg').textContent='Teleporte indisponível: '+err.message;
+  $('msg').textContent=
+   'Teleporte indisponível: '+err.message;
  }
 
  renderText();
@@ -331,9 +435,36 @@ function teleportOf(r){
 }
 
 function usable(e){
- return e.routes.filter(r=>
+ const curated=e.routes.filter(r=>
   state.enabled[r[0]]===true
  );
+
+ // Até quatro teleportes extras próximos
+ // dos destinos no mapa.
+ if(!state.autoRoute||!spots.length){
+  return curated;
+ }
+
+ const used=new Set(curated.map(routeKey));
+
+ const extra=spots.filter(t=>
+  t.id &&
+  state.enabled[t.group]===true &&
+  teleMap(t)===e.m &&
+  t.level===0 &&
+  h(t,e)>0 &&
+  h(t,e)<=180 &&
+  !used.has(t.group+':'+t.id)
+ ).sort((a,b)=>h(a,e)-h(b,e))
+  .slice(0,4)
+  .map(t=>[
+   t.group,
+   t.id,
+   'Use '+t.groupName+' → '+t.name+
+   ' e siga a rota indicada no mapa.'
+  ]);
+
+ return curated.concat(extra);
 }
 
 function preferredRoute(e){
@@ -348,16 +479,16 @@ function preferredRoute(e){
  if(chosen)return chosen;
 
  if(state.autoRoute){
-  const found=pathResults
-   .filter(p=>
-    p.engram===e.id &&
-    p.path?.length>0 &&
-    options.some(r=>routeKey(r)===p.key)
-   )
-   .sort((a,b)=>a.steps-b.steps);
+  const found=pathResults.filter(p=>
+   p.engram===e.id &&
+   p.path?.length>0 &&
+   options.some(r=>routeKey(r)===p.key)
+  ).sort((a,b)=>a.steps-b.steps);
 
   if(found.length){
-   return options.find(r=>routeKey(r)===found[0].key);
+   return options.find(r=>
+    routeKey(r)===found[0].key
+   );
   }
  }
 
@@ -402,9 +533,9 @@ function tpIcon(t,best){
  });
 }
 
-// ====================================================
+// ==========================================
 // MAPA
-// ====================================================
+// ==========================================
 
 function setupMap(){
  if(map||typeof L==='undefined')return;
@@ -428,7 +559,8 @@ function drawMap(){
  setupMap();
 
  if(!map){
-  $('msg').textContent='Mapa indisponível';
+  $('msg').textContent=
+   'Mapa indisponível (Leaflet não carregou)';
   return;
  }
 
@@ -438,20 +570,36 @@ function drawMap(){
  if(activeMap!==e.m){
   if(baseTile)map.removeLayer(baseTile);
 
-  const Tile=L.TileLayer.extend({
-   getTileUrl(c){
-    return `${TILES}/${e.m}/${c.z}/0_${c.x}_${-1-c.y}.png`;
-   }
-  });
+  // Naragun: remove o mosaico com blocos pretos
+  // e mantém os marcadores em um fundo uniforme.
+  if(e.m===649){
+   baseTile=null;
+   map.getContainer().style.background='#1c3028';
 
-  baseTile=new Tile('',{
-   tileSize:256,
-   minZoom:-3,
-   maxZoom:4,
-   maxNativeZoom:3,
-   noWrap:true,
-   attribution:'Mapa: mejrs / RuneScape Wiki • © Jagex'
-  }).addTo(map);
+   $('msg').textContent=
+    'Naragun — visão simplificada; pinos preservados';
+
+  }else{
+   map.getContainer().style.background='#101e1c';
+
+   $('msg').textContent=
+    spots.length+' destinos de teleporte';
+
+   const Tile=L.TileLayer.extend({
+    getTileUrl(c){
+     return `${TILES}/${e.m}/${c.z}/0_${c.x}_${-1-c.y}.png`;
+    }
+   });
+
+   baseTile=new Tile('',{
+    tileSize:256,
+    minZoom:-3,
+    maxZoom:4,
+    maxNativeZoom:3,
+    noWrap:true,
+    attribution:'Mapa: mejrs / RuneScape Wiki • © Jagex'
+   }).addTo(map);
+  }
 
   activeMap=e.m;
  }
@@ -469,7 +617,7 @@ function drawMap(){
  }).addTo(map);
 
  destPin.bindPopup(
-  `${e.n} — ${e.where} (X: ${p.x}, Y: ${p.y} — marcador da Wiki)`
+  `${e.n} — ${e.where} (X: ${p.x}, Y: ${p.y})`
  );
 
  map.setView(
@@ -490,11 +638,12 @@ function drawTeleports(){
  tpLayer.clearLayers();
  if(!state.showTP)return;
 
- let e=current();
- let r=preferredRoute(e);
- let bounds=map.getBounds().pad(.3);
+ const e=current();
+ const r=preferredRoute(e);
+ const bounds=map.getBounds().pad(.3);
+ const eligible=usable(e);
 
- for(let t of spots){
+ for(const t of spots){
   if(
    state.enabled[t.group]!==true ||
    teleMap(t)!==e.m
@@ -502,35 +651,42 @@ function drawTeleports(){
 
   if(
    !state.showAll &&
-   !e.routes.some(x=>
+   !eligible.some(x=>
     x[0]===t.group&&x[1]===t.id
    )
   )continue;
 
   if(!bounds.contains([t.y,t.x]))continue;
 
-  const isBest=routeKey(r)===t.group+':'+t.id;
+  const isBest=
+   routeKey(r)===t.group+':'+t.id;
 
-  let marker=L.marker([t.y,t.x],{
+  const marker=L.marker([t.y,t.x],{
    icon:tpIcon(t,isBest),
    title:t.groupName+' — '+t.name,
    zIndexOffset:isBest?800:0
   }).addTo(tpLayer);
 
-  let popup=document.createElement('div');
-  let heading=document.createElement('b');
-  heading.textContent=t.groupName+' — '+t.name;
+  const popup=document.createElement('div');
+  const heading=document.createElement('b');
+
+  heading.textContent=
+   t.groupName+' — '+t.name;
+
   popup.append(heading);
 
-  let code=document.createElement('div');
+  const code=document.createElement('div');
+
   code.textContent=t.code
    ?'Opção: '+t.code
    :'Sem tecla fixa';
 
   popup.append(code);
 
-  if(e.routes.some(x=>x[0]===t.group&&x[1]===t.id)){
-   let choose=document.createElement('button');
+  if(eligible.some(x=>
+   x[0]===t.group&&x[1]===t.id
+  )){
+   const choose=document.createElement('button');
    choose.textContent='Usar este teleporte';
 
    choose.onclick=()=>{
@@ -549,9 +705,9 @@ function drawTeleports(){
  }
 }
 
-// ====================================================
-// A* — CAMINHOS COM COLISÃO
-// ====================================================
+// ==========================================
+// BUSCA A* COM DADOS DE COLISÃO
+// ==========================================
 
 const SIZE=1280;
 
@@ -580,7 +736,9 @@ async function collisionFile(fx,fy,level){
    const url=`${COLLISION}collision-${k}.bin`;
    const r=await fetch(url);
 
-   if(!r.ok)throw Error('Colisão HTTP '+r.status);
+   if(!r.ok){
+    throw Error('Colisão HTTP '+r.status);
+   }
 
    const bytes=pako.inflate(
     new Uint8Array(await r.arrayBuffer())
@@ -594,7 +752,12 @@ async function collisionFile(fx,fy,level){
   })());
  }
 
- return collisionCache.get(k);
+ try{
+  return await collisionCache.get(k);
+ }catch(err){
+  collisionCache.delete(k);
+  throw err;
+ }
 }
 
 class MinHeap{
@@ -603,7 +766,8 @@ class MinHeap{
  }
 
  push(n){
-  let a=this.a,i=a.length;
+  let a=this.a;
+  let i=a.length;
   a.push(n);
 
   while(i>0){
@@ -629,8 +793,13 @@ class MinHeap{
    while(true){
     let c=i*2+1;
     if(c>=a.length)break;
-    if(c+1<a.length&&a[c+1][0]<a[c][0])c++;
+
+    if(c+1<a.length&&a[c+1][0]<a[c][0]){
+     c++;
+    }
+
     if(a[c][0]>=last[0])break;
+
     a[i]=a[c];
     i=c;
    }
@@ -656,7 +825,8 @@ function aStar(start,goal,at,box){
  let {minX,minY,maxX,maxY}=box;
  let w=maxX-minX+1;
 
- const key=(x,y)=>(y-minY)*w+x-minX;
+ const key=(x,y)=>
+  (y-minY)*w+x-minX;
 
  function near(p,radius){
   for(let d=0;d<=radius;d++){
@@ -691,6 +861,7 @@ function aStar(start,goal,at,box){
 
  const begin=key(s.x,s.y);
  const target=key(g.x,g.y);
+
  const open=new MinHeap();
  const score=new Map([[begin,0]]);
  const parent=new Map();
@@ -807,7 +978,9 @@ async function findWalkPath(start,goal,level){
   ){
    jobs.push(
     collisionFile(fx,fy,level)
-     .then(bytes=>chunks.set(`${fx},${fy}`,bytes))
+     .then(bytes=>
+      chunks.set(`${fx},${fy}`,bytes)
+     )
    );
   }
  }
@@ -824,7 +997,9 @@ async function findWalkPath(start,goal,level){
   const fy=Math.floor(y/SIZE);
   const c=chunks.get(`${fx},${fy}`);
 
-  return c?c[(y%SIZE)*SIZE+(x%SIZE)]:0;
+  return c
+   ?c[(y%SIZE)*SIZE+(x%SIZE)]
+   :0;
  };
 
  await new Promise(resolve=>setTimeout(resolve,0));
@@ -832,9 +1007,9 @@ async function findWalkPath(start,goal,level){
  return aStar(start,goal,at,box);
 }
 
-// ====================================================
+// ==========================================
 // CÁLCULO DAS ROTAS
-// ====================================================
+// ==========================================
 
 async function calculateRoutes(){
  const epoch=++pathEpoch;
@@ -861,9 +1036,14 @@ async function calculateRoutes(){
  drawRoute();
 
  const valid=usable(e)
-  .map(r=>({route:r,t:teleportOf(r)}))
+  .map(r=>({
+   route:r,
+   t:teleportOf(r)
+  }))
   .filter(({t})=>
-   t&&teleMap(t)===e.m&&t.level===0
+   t&&
+   teleMap(t)===e.m&&
+   t.level===0
   );
 
  if(e.id==='elder'){
@@ -876,7 +1056,7 @@ async function calculateRoutes(){
 
  if(!valid.length){
   pathMessage=
-   'A rota envolve outro mapa ou transporte especial. Siga as instruções por etapas.';
+   'A rota envolve outro mapa ou transporte especial; siga as instruções por etapas.';
   drawRoute();
   renderText();
   return;
@@ -896,6 +1076,7 @@ async function calculateRoutes(){
      key:routeKey(route),
      engram:e.id
     }:null;
+
    }catch(error){
     return {
      key:routeKey(route),
@@ -912,10 +1093,11 @@ async function calculateRoutes(){
  const fails=all.filter(x=>x?.error);
 
  pathMessage=pathResults.length
-  ?'Caminho calculado até a região do marcador da Wiki. Portas e objetos ainda podem exigir interação.'
+  ?'Rota caminhável encontrada até a região do marcador. Portas e objetos ainda podem exigir interação.'
   :fails.length
-   ?'Dados de colisão indisponíveis ('+fails[0].error+'). Siga a Wiki.'
-   :'Não foi possível calcular um caminho caminhável para esse destino.';
+   ?'Dados de colisão indisponíveis ('+
+    fails[0].error+'). Siga a Wiki.'
+   :'Não foi possível calcular caminho caminhável até esse pino.';
 
  drawRoute();
  renderText();
@@ -930,13 +1112,40 @@ function drawRoute(){
  if(!state.showPath)return;
 
  const e=current();
+ if(!usable(e).length)return;
+
  const key=routeKey(preferredRoute(e));
 
  const result=pathResults.find(p=>
-  p.engram===e.id&&p.key===key
+  p.engram===e.id &&
+  p.key===key
  );
 
- if(!result)return;
+ if(!result){
+  // Linha pontilhada: direção aproximada,
+  // não representa uma passagem caminhável verificada.
+  const t=teleportOf(preferredRoute(e));
+
+  if(
+   t&&
+   teleMap(t)===e.m&&
+   t.level===0&&
+   h(t,e)<=440
+  ){
+   L.polyline(
+    [[t.y,t.x],[e.y,e.x]],
+    {
+     color:'#f0c56e',
+     weight:3,
+     opacity:.85,
+     dashArray:'3 10',
+     interactive:false
+    }
+   ).addTo(pathLayer);
+  }
+
+  return;
+ }
 
  const points=result.path;
 
@@ -966,9 +1175,9 @@ function drawRoute(){
  }).addTo(pathLayer);
 }
 
-// ====================================================
+// ==========================================
 // INTERFACE
-// ====================================================
+// ==========================================
 
 function renderText(){
  const e=current();
@@ -981,11 +1190,12 @@ function renderText(){
  $('counter').textContent=
   `Engrama ${state.index+1}/12 · Prestígio ${state.prestige}`;
 
- $('teleTitle').textContent=!usable(e).length
-  ?'Nenhum teleporte habilitado'
-  :t
-   ?`Teleporte: ${t.groupName} → ${t.name}${t.code?' ['+t.code+']':''}`
-   :'Teleporte: '+r[0];
+ $('teleTitle').textContent=
+  !usable(e).length
+   ?'Nenhum teleporte habilitado'
+   :t
+    ?`Teleporte: ${t.groupName} → ${t.name}${t.code?' ['+t.code+']':''}`
+    :'Teleporte: '+r[0];
 
  $('instructions').textContent='1. '+r[2];
 
@@ -993,12 +1203,16 @@ function renderText(){
   '2. Local do engrama: '+e.where;
 
  const result=pathResults.find(p=>
-  p.engram===e.id&&p.key===routeKey(r)
+  p.engram===e.id &&
+  p.key===routeKey(r)
  );
 
  $('routeStatus').textContent=result
-  ?`↳ ${result.steps} passos de caminhada até o destino da Wiki${state.autoRoute&&!state.selected[e.id]?' · menor caminhada entre as rotas cadastradas e calculadas':''}. ${result.trimEnd?'O cálculo terminou na casa caminhável mais próxima.':''}`
-  :pathMessage;
+  ?`↳ ${result.steps} passos calculados até o destino${state.autoRoute&&!state.selected[e.id]?' · menor caminhada entre as rotas verificadas':''}. ${result.trimEnd?'O cálculo terminou na casa caminhável mais próxima.':''}`
+  :pathMessage+
+   (state.showPath
+    ?' · Linha amarela pontilhada, quando disponível, indica somente direção.'
+    :'');
 
  $('warning').textContent=
   (e.req?'⚠ '+e.req+' · ':'')+
@@ -1006,7 +1220,7 @@ function renderText(){
 
  $('choices').replaceChildren();
 
- for(let option of usable(e)){
+ for(const option of usable(e)){
   const btn=document.createElement('button');
   const tp=teleportOf(option);
 
@@ -1029,9 +1243,8 @@ function renderText(){
   $('choices').append(btn);
  }
 
- $('done').textContent=done[e.id]
-  ?'↶ Desmarcar'
-  :'✓ Coletado e próximo';
+ $('done').textContent=
+  done[e.id]?'↶ Desmarcar':'✓ Coletado e próximo';
 
  $('progress').textContent=
   `${E.filter(x=>done[x.id]).length}/12 coletados · Progresso salvo`;
@@ -1067,7 +1280,9 @@ function render(){
 }
 
 function advance(n){
- state.index=(state.index+n+E.length)%E.length;
+ state.index=
+  (state.index+n+E.length)%E.length;
+
  render();
 }
 
@@ -1123,16 +1338,30 @@ $('showPath').onclick=()=>{
  }
 };
 
+// Novo botão para recalcular a melhor rota
+// depois de alterar os teleportes disponíveis.
+$('recalc').onclick=()=>{
+ delete state.selected[current().id];
+
+ state.autoRoute=true;
+ state.showPath=true;
+ pathResults=[];
+
+ persist();
+ calculateRoutes();
+};
+
 $('collapse').onclick=()=>{
  state.compact=!state.compact;
  persist();
  renderText();
+
  setTimeout(()=>map?.invalidateSize(),50);
 };
 
-// ====================================================
-// LISTA DE COLETA
-// ====================================================
+// ==========================================
+// LISTA E CONFIGURAÇÕES
+// ==========================================
 
 function openModal(title){
  $('modalTitle').textContent=title;
@@ -1148,10 +1377,10 @@ function closeModal(){
 $('cancel').onclick=closeModal;
 
 function addCheckbox(parent,label,checked){
- let l=document.createElement('label');
+ const l=document.createElement('label');
  l.className='check';
 
- let c=document.createElement('input');
+ const c=document.createElement('input');
  c.type='checkbox';
  c.checked=checked;
 
@@ -1170,30 +1399,39 @@ $('list').onclick=()=>{
 
  const caption=document.createElement('p');
  caption.className='dim';
-
  caption.textContent=
   'Clique na bolinha para marcar ou desmarcar. Clique no nome para abrir o engrama no mapa.';
 
  $('modalBody').append(caption);
 
  const reset=document.createElement('button');
- reset.textContent='↺ Reiniciar coleta deste prestígio';
+
+ reset.textContent=
+  '↺ Reiniciar coleta deste prestígio';
 
  reset.style=
   'width:100%;margin:0 0 12px 0;background:#643832';
 
- reset.onclick=()=>{
-  if(!confirm(
-   'Desmarcar todos os 12 engramas do prestígio '+
-   state.prestige+
-   '? Seus teleportes serão mantidos.'
-  ))return;
+ let resetArmed=false;
 
+ reset.onclick=()=>{
+  if(!resetArmed){
+   resetArmed=true;
+   reset.style.background='#a83c39';
+
+   reset.textContent=
+    'Confirmar: zerar os 12 coletados? (clique novamente)';
+
+   return;
+  }
+
+  // Confirmação dentro do addon.
+  // Não depende de window.confirm().
   state.done[state.prestige]={};
 
   persist();
   closeModal();
-  render();
+  renderText();
   $('list').click();
  };
 
@@ -1253,10 +1491,6 @@ $('list').onclick=()=>{
  });
 };
 
-// ====================================================
-// CONFIGURAÇÕES
-// ====================================================
-
 $('settings').onclick=()=>{
  openModal('⚙ Configurações');
 
@@ -1295,6 +1529,7 @@ $('settings').onclick=()=>{
  const search=document.createElement('input');
  search.type='search';
  search.placeholder='Buscar teleporte…';
+
  $('modalBody').append(search);
 
  const field=document.createElement('fieldset');
@@ -1305,7 +1540,7 @@ $('settings').onclick=()=>{
 
  const list=[];
 
- for(let g of groups){
+ for(const g of groups){
   const c=addCheckbox(
    field,
    g.name,
@@ -1344,7 +1579,7 @@ $('settings').onclick=()=>{
  reset.style='width:100%;margin-top:8px';
 
  reset.onclick=()=>{
-  for(let key of [
+  for(const key of [
    'gps-engramas-v2',
    'gps-engramas-v4',
    'gps-engramas-v5'
@@ -1369,15 +1604,14 @@ $('settings').onclick=()=>{
 
  $('modalBody').append(reset);
 
- let note=document.createElement('p');
+ const note=document.createElement('p');
  note.className='dim';
 
  note.textContent=
   'As rotas usam dados de colisão externos do Clue Trainer. '+
-  'O percurso mais curto considera apenas caminhada no mapa: '+
-  'não calcula automaticamente portas, barcos, tempo de animação, '+
-  'Surge nem Dive. Os 12 pinos usam os marcadores da Wiki; '+
-  'o algoritmo pode precisar parar na casa caminhável mais próxima.';
+  'A menor caminhada não inclui automaticamente portas, barcos, '+
+  'tempo de animação, Surge ou Dive. '+
+  'O cálculo pode terminar na casa caminhável mais próxima.';
 
  $('modalBody').append(note);
 
@@ -1393,7 +1627,7 @@ $('settings').onclick=()=>{
   state.showPath=path.checked;
 
   if(state.autoRoute){
-   state.selected[current().id]=undefined;
+   state.selected={};
   }
 
   closeModal();
@@ -1401,8 +1635,10 @@ $('settings').onclick=()=>{
  };
 };
 
+// Inicialização
 render();
 loadTeleports();
+
 </script>
 </body>
 </html>
